@@ -218,22 +218,11 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const defaultQuestions = [
-            // Default 15 questions remain here...
             { question: "Which of the following BEST describes the principle of 'Confidentiality' in the CIA triad?", options: ["Data is accurate and has not been tampered with.", "Systems and data are accessible when needed.", "Information is protected from unauthorized disclosure.", "Users can be held accountable for their actions."], answer: "C", explanation: "Confidentiality ensures that sensitive information is not disclosed to unauthorized individuals, entities, or processes.", distractors: { A: "This describes Integrity.", B: "This describes Availability.", D: "This describes Accountability." } },
             { question: "According to the (ISC)² Code of Ethics, which canon holds the highest priority?", options: ["Act honorably, honestly, justly, responsibly, and legally.", "Provide diligent and competent service to principals.", "Advance and protect the profession.", "Protect society, the common good, necessary public trust and confidence, and the infrastructure."], answer: "D", explanation: "The (ISC)² Code of Ethics is ordered by priority. The first canon, 'Protect society, the common good...', is the most important and takes precedence over all others.", distractors: { A: "This is the second canon.", B: "This is the third canon.", C: "This is the fourth canon."} },
             { question: "A company's security policy states that all employees must use strong passwords. A separate document specifies that passwords must be at least 12 characters long and include a mix of character types. This separate document is an example of a:", options: ["Procedure", "Guideline", "Standard", "Policy"], answer: "C", explanation: "A Standard provides mandatory, specific requirements to support a policy.", distractors: { A: "A procedure gives step-by-step instructions.", B: "A guideline offers recommendations or best practices.", D: "A policy is a high-level statement of intent."} },
             { question: "An organization identifies a critical server has a value of $200,000. It is estimated that a specific threat will occur once every five years, and its successful exploitation would result in a 25% loss of the server's value. What is the Annualized Loss Expectancy (ALE)?", options: ["$10,000", "$50,000", "$25,000", "$100,000"], answer: "A", explanation: "First, calculate the Single Loss Expectancy (SLE): Asset Value ($200,000) * Exposure Factor (0.25) = $50,000. Next, calculate the Annualized Rate of Occurrence (ARO): 1 occurrence / 5 years = 0.2. Finally, calculate the ALE: SLE ($50,000) * ARO (0.2) = $10,000.", distractors: { B: "$50,000 is the SLE, not the ALE.", C: "This is an incorrect calculation.", D: "This is an incorrect calculation."} },
-            { question: "What is the PRIMARY purpose of a Business Impact Analysis (BIA)?", options: ["To identify and analyze threats to the organization.", "To select appropriate security controls.", "To determine the criticality of business processes and the impact of their disruption.", "To create a step-by-step plan for disaster recovery."], answer: "C", explanation: "The BIA is the foundational step in business continuity planning. Its main goal is to identify critical business functions and quantify the impact that a disruption to those functions would cause.", distractors: { A: "This is part of a risk assessment.", B: "This is part of risk treatment.", D: "This is the purpose of a DRP."} },
-            { question: "An organization decides to purchase cybersecurity insurance to cover potential losses from a data breach. This is an example of which risk response strategy?", options: ["Risk Mitigation", "Risk Acceptance", "Risk Avoidance", "Risk Transference"], answer: "D", explanation: "Risk Transference (or transfer) involves shifting the financial impact of a risk to a third party, such as an insurance company.", distractors: { A: "Mitigation would involve implementing controls to reduce the risk.", B: "Acceptance would involve acknowledging the risk and not taking action.", C: "Avoidance would involve stopping the activity causing the risk."} },
-            { question: "Which of the following is a personnel security control designed primarily to detect fraudulent or malicious activity by requiring another employee to perform the duties of a critical role?", options: ["Separation of Duties", "Least Privilege", "Mandatory Vacation", "Background Checks"], answer: "C", explanation: "Mandatory vacations force an employee to be away from their role for a period, allowing others to perform their duties. This can often uncover irregularities or fraudulent activities that the original employee was concealing.", distractors: { A: "Separation of duties prevents a single person from completing a critical task alone.", B: "Least privilege limits access to only what is necessary.", D: "Background checks are a pre-employment screening control."} },
-            { question: "The European Union's General Data Protection Regulation (GDPR) is primarily concerned with:", options: ["Protecting the health information of individuals.", "Standardizing security controls for government agencies.", "Protecting the fundamental rights and freedoms of natural persons, particularly their right to data protection.", "Securing credit card transaction data."], answer: "C", explanation: "GDPR is a comprehensive data protection law that grants individuals significant rights over their personal data and imposes strict obligations on organizations that collect, process, or store it.", distractors: { A: "This is the focus of HIPAA.", B: "This is the focus of frameworks like NIST.", D: "This is the focus of PCI DSS."} },
-            { question: "The act of performing research, reading security best practices, and staying up-to-date on emerging threats to ensure a security program is properly implemented is an example of:", options: ["Due Care", "Due Diligence", "Due Process", "Negligence"], answer: "B", explanation: "Due Diligence is the investigative, research-oriented part of ensuring security.", distractors: { A: "Due care is the action of maintaining the controls.", C: "Due process is a legal principle.", D: "Negligence is the failure to exercise due care."} },
-            { question: "Which document is tactical in nature and focuses on restoring IT systems and infrastructure at an alternate site after a major disruption?", options: ["Business Continuity Plan (BCP)", "Business Impact Analysis (BIA)", "Disaster Recovery Plan (DRP)", "Security Policy"], answer: "C", explanation: "A DRP is a subset of the overall BCP. While the BCP is strategic and focuses on keeping the business operational, the DRP is tactical and provides the detailed procedures to recover the technological capabilities.", distractors: { A: "A BCP is a strategic plan for the entire business.", B: "A BIA is an analysis, not a plan.", D: "A security policy is a high-level document of intent."} },
-            { question: "A company wants to classify its data based on the potential damage that an unauthorized disclosure would cause. Which of the following would be the MOST appropriate label for data that, if disclosed, could cause exceptionally grave damage to national security?", options: ["Confidential", "Private", "Sensitive", "Top Secret"], answer: "D", explanation: "This question uses the government classification scheme. 'Top Secret' is the highest level, reserved for information that could cause 'exceptionally grave damage.' 'Confidential' is typically the lowest level in this model.", distractors: { A: "Confidential is a lower level of classification.", B: "Private is a commercial classification.", C: "Sensitive is a commercial classification."} },
-            { question: "What is the main goal of security governance?", options: ["To purchase the latest security technology.", "To ensure that security strategies are aligned with business objectives and regulatory requirements.", "To perform daily monitoring of security alerts.", "To achieve 100% compliance with all security frameworks."], answer: "B", explanation: "Security governance provides the strategic framework for an organization's security efforts, ensuring that they support business goals, manage risk effectively, and comply with all relevant laws and regulations.", distractors: { A: "This is a tactical decision, not a governance goal.", C: "This is an operational task.", D: "Compliance is a goal, but alignment with business objectives is the main goal."} },
-            { question: "The STRIDE threat model is often used to identify threats in software development. What does the 'S' in STRIDE stand for?", options: ["Spoofing", "Security", "Standard", "System"], answer: "A", explanation: "STRIDE is a mnemonic for six categories of threats: Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, and Elevation of Privilege.", distractors: { B: "Security is the overall goal, not a threat category.", C: "Standard is not part of STRIDE.", D: "System is not part of STRIDE."} },
-            { question: "Which of the following is a qualitative risk assessment approach?", options: ["Calculating the Annualized Loss Expectancy (ALE).", "Using a high, medium, and low scale to rank risks.", "Determining the Single Loss Expectancy (SLE).", "Calculating the return on security investment (ROSI)."], answer: "B", explanation: "Qualitative risk assessment uses subjective measures and descriptive scales (like high, medium, low) to evaluate risk.", distractors: { A: "ALE is a quantitative measure.", C: "SLE is a quantitative measure.", D: "ROSI is a quantitative measure."} },
-            { question: "A security awareness program is MOST effective when it is:", options: ["Conducted once a year for all employees.", "Focused only on the IT department.", "A continuous process that is regularly updated and reinforced.", "Based on highly technical and complex security concepts."], answer: "C", explanation: "Effective security awareness is not a one-time event. It requires ongoing training, reinforcement, and updates to keep pace with changing threats and to keep security top-of-mind for all employees.", distractors: { A: "Once a year is not frequent enough.", B: "Security is everyone's responsibility, not just IT.", D: "Awareness should be accessible, not overly technical."} }
+            { question: "What is the PRIMARY purpose of a Business Impact Analysis (BIA)?", options: ["To identify and analyze threats to the organization.", "To select appropriate security controls.", "To determine the criticality of business processes and the impact of their disruption.", "To create a step-by-step plan for disaster recovery."], answer: "C", explanation: "The BIA is the foundational step in business continuity planning. Its main goal is to identify critical business functions and quantify the impact that a disruption to those functions would cause.", distractors: { A: "This is part of a risk assessment.", B: "This is part of risk treatment.", D: "This is the purpose of a DRP."} }
         ];
 
         // --- State Variables ---
@@ -250,6 +239,7 @@
         let db;
         let questionsDocRef;
         let historyCollectionRef;
+        let adminPassDocRef;
         let isDbReady = false;
 
         // --- DOM Elements ---
@@ -325,10 +315,10 @@
                         // User is signed in. Now we can safely set up Firestore.
                         console.log("Firebase user signed in:", user.uid);
                         
-                        // **UPDATED PATHS**
                         const basePath = db.collection('artifacts').doc(appId).collection('public').doc('data');
                         questionsDocRef = basePath.collection('quizzes').doc('cissp_domain_1');
                         historyCollectionRef = basePath.collection('history');
+                        adminPassDocRef = basePath.collection('admin').doc('credentials');
 
                         questionsDocRef.onSnapshot((docSnap) => {
                             const data = docSnap.data();
@@ -348,7 +338,6 @@
                             startExamBtn.disabled = false;
                         }, (error) => {
                             console.error("Firestore listener error:", error);
-                            // Display a more specific error if it's a permission issue
                             if (error.code === 'permission-denied') {
                                 startPageIntroEl.innerHTML = `
                                     <div class="text-left p-4 bg-red-50 border-l-4 border-red-400">
@@ -613,7 +602,9 @@
             const now = new Date();
             const scorePercent = Math.round((score / shuffledQuestions.length) * 100) || 0;
             let y = 15;
-            const margin = 15, pageHeight = doc.internal.pageSize.height, maxWidth = doc.internal.pageSize.width - margin * 2;
+            const margin = 15;
+            const pageHeight = doc.internal.pageSize.height;
+            const maxWidth = doc.internal.pageSize.width - margin * 2;
             
             const addFooter = () => {
                 const pageCount = doc.internal.getNumberOfPages();
@@ -624,50 +615,54 @@
                 }
             };
 
+            // --- PDF Header ---
             doc.setFontSize(18);
-            doc.text(loadedTitle, margin, y, { align: 'left' });
+            doc.text(loadedTitle, margin, y);
             y += 10;
             doc.setFontSize(12);
             doc.text(`Completed On: ${now.toLocaleString('en-IN')}`, margin, y);
             y += 7;
             doc.text(`Final Score: ${score}/${shuffledQuestions.length} (${scorePercent}%)`, margin, y);
-            y += 10;
+            y += 15; // Add more space before questions start
 
+            // --- PDF Body (Questions) ---
             shuffledQuestions.forEach((q, i) => {
                 const correctOptionIndex = getCorrectOptionIndex(q);
                 const isCorrect = userAnswers[i] === correctOptionIndex;
                 const userAnswerText = userAnswers[i] !== null ? q.options[userAnswers[i]] : "N/A";
                 const correctAnswerFullText = q.options[correctOptionIndex];
                 
-                const qLines = doc.splitTextToSize(`Q ${i + 1}: ${q.question}`, maxWidth - 2);
-                const yourLines = doc.splitTextToSize(`Your Answer: ${userAnswerText}`, maxWidth - 10);
-                
-                const correctLines = doc.splitTextToSize(`Correct Answer: ${correctAnswerFullText}`, maxWidth - 10);
-                
-                const expLines = doc.splitTextToSize(`Explanation: ${q.explanation}`, maxWidth - 2);
-                
-                const contentHeight = (qLines.length + yourLines.length + correctLines.length + expLines.length) * 5 + 30;
+                // Helper to check for page breaks
+                const checkPageBreak = (requiredHeight) => {
+                    if (y + requiredHeight > pageHeight - margin) {
+                        doc.addPage();
+                        y = margin;
+                    }
+                };
 
-                if (y + contentHeight > pageHeight - margin) {
-                    doc.addPage();
-                    y = margin;
-                }
-
+                // --- Question Text ---
                 doc.setFont(undefined, 'bold');
                 doc.setFontSize(11);
-                doc.text(qLines, margin + 1, y + 5);
+                const qLines = doc.splitTextToSize(`Q ${i + 1}: ${q.question}`, maxWidth);
+                checkPageBreak(qLines.length * 5 + 5);
+                doc.text(qLines, margin, y);
                 y += qLines.length * 5 + 5;
 
+                // --- User Answer Box ---
                 doc.setFont(undefined, 'normal');
                 doc.setFontSize(10);
-                
+                const yourLines = doc.splitTextToSize(`Your Answer: ${userAnswerText}`, maxWidth - 4); // a little less width for padding
+                checkPageBreak(yourLines.length * 5 + 8);
                 doc.setDrawColor(isCorrect ? 10 : 239, isCorrect ? 185 : 68, isCorrect ? 135 : 68);
                 doc.setFillColor(isCorrect ? 209 : 254, isCorrect ? 250 : 226, isCorrect ? 229 : 226);
                 doc.roundedRect(margin, y, maxWidth, yourLines.length * 5 + 4, 3, 3, 'FD');
                 doc.text(yourLines, margin + 2, y + 5);
                 y += yourLines.length * 5 + 8;
 
+                // --- Correct Answer Box (if needed) ---
                 if (!isCorrect) {
+                    const correctLines = doc.splitTextToSize(`Correct Answer: ${correctAnswerFullText}`, maxWidth - 4);
+                    checkPageBreak(correctLines.length * 5 + 8);
                     doc.setDrawColor(209, 213, 219);
                     doc.setFillColor(249, 250, 251);
                     doc.roundedRect(margin, y, maxWidth, correctLines.length * 5 + 4, 3, 3, 'FD');
@@ -675,9 +670,12 @@
                     y += correctLines.length * 5 + 8;
                 }
                 
+                // --- Explanation Text ---
                 doc.setFont(undefined, 'italic');
-                doc.text(expLines, margin + 1, y + 5, { align: 'justify', maxWidth: maxWidth - 2 });
-                y += expLines.length * 5 + 10;
+                const expLines = doc.splitTextToSize(`Explanation: ${q.explanation}`, maxWidth);
+                checkPageBreak(expLines.length * 5 + 15); // Add extra space for after explanation
+                doc.text(expLines, margin, y); // Removed align: 'justify'
+                y += expLines.length * 5 + 15; // Add extra space
             });
             
             addFooter();
@@ -789,14 +787,29 @@
             }
         }
         
-        function handlePasswordSubmit() {
+        async function handlePasswordSubmit() {
             const password = passwordInputEl.value;
-            if (password === "Legacy@2025") {
-                window.location.hash = '#admin-menu';
-                passwordErrorEl.innerText = '';
-                passwordInputEl.value = '';
-            } else {
-                passwordErrorEl.innerText = 'Incorrect password. Please try again.';
+            if (!isDbReady || !adminPassDocRef) {
+                passwordErrorEl.innerText = 'Database not ready. Please try again.';
+                return;
+            }
+            
+            try {
+                const docSnap = await adminPassDocRef.get();
+                if (docSnap.exists() && docSnap.data().value === password) {
+                    window.location.hash = '#admin-menu';
+                    passwordErrorEl.innerText = '';
+                    passwordInputEl.value = '';
+                } else {
+                    passwordErrorEl.innerText = 'Incorrect password. Please try again.';
+                }
+            } catch (error) {
+                console.error("Error fetching admin password:", error);
+                if (error.code === 'permission-denied') {
+                     passwordErrorEl.innerText = 'Permission denied. Check Firestore rules.';
+                } else {
+                     passwordErrorEl.innerText = 'Error checking password. Please try again.';
+                }
             }
         }
         
