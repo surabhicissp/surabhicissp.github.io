@@ -7,10 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Use newer Firebase SDK for better compatibility and features -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <!-- Use the latest Firebase SDK for best compatibility -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -239,7 +239,6 @@
         let db;
         let questionsDocRef;
         let historyCollectionRef;
-        let adminPassDocRef;
         let isDbReady = false;
 
         // --- DOM Elements ---
@@ -318,7 +317,6 @@
                         const basePath = db.collection('artifacts').doc(appId).collection('public').doc('data');
                         questionsDocRef = basePath.collection('quizzes').doc('cissp_domain_1');
                         historyCollectionRef = basePath.collection('history');
-                        adminPassDocRef = basePath.collection('admin').doc('credentials');
 
                         questionsDocRef.onSnapshot((docSnap) => {
                             const data = docSnap.data();
@@ -789,27 +787,12 @@
         
         async function handlePasswordSubmit() {
             const password = passwordInputEl.value;
-            if (!isDbReady || !adminPassDocRef) {
-                passwordErrorEl.innerText = 'Database not ready. Please try again.';
-                return;
-            }
-            
-            try {
-                const docSnap = await adminPassDocRef.get();
-                if (docSnap.exists() && docSnap.data().value === password) {
-                    window.location.hash = '#admin-menu';
-                    passwordErrorEl.innerText = '';
-                    passwordInputEl.value = '';
-                } else {
-                    passwordErrorEl.innerText = 'Incorrect password. Please try again.';
-                }
-            } catch (error) {
-                console.error("Error fetching admin password:", error);
-                if (error.code === 'permission-denied') {
-                     passwordErrorEl.innerText = 'Permission denied. Check Firestore rules.';
-                } else {
-                     passwordErrorEl.innerText = 'Error checking password. Please try again.';
-                }
+            if (password === "Legacy@2025") {
+                window.location.hash = '#admin-menu';
+                passwordErrorEl.innerText = '';
+                passwordInputEl.value = '';
+            } else {
+                passwordErrorEl.innerText = 'Incorrect password. Please try again.';
             }
         }
         
