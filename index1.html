@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AAISM Practice Exam - Candidate Portal</title>
+    <title>AAISM Practice Exam - Surabhi & Adarsh</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,257 +11,945 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .option-btn { transition: all 0.2s; }
-        .selected { background-color: #e0e7ff !important; border-color: #6366f1 !important; }
-        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; }
-        .incorrect { background-color: #fee2e2 !important; border-color: #ef4444 !important; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .option-btn {
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .selected {
+            background-color: #e0e7ff !important;
+            border-color: #6366f1 !important;
+        }
+        .correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+        }
+        .incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+        }
+        .review-question-container {
+            border-left: 4px solid #e5e7eb;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+        }
+        .review-user-answer.correct {
+             border-color: #10b981;
+        }
+        .review-user-answer.incorrect {
+             border-color: #ef4444;
+        }
+        /* Added styles for modals */
+        .modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-container {
+            transition: transform 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
     <div id="app-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-3xl relative">
-        
+       
         <div id="landing-page" class="text-center">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">AAISM Practice Exam 2026</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">AAISM Practice Exam 2026 - Surabhi & Adarsh</h1>
+            <p class="text-gray-600 mb-8">Welcome! Please choose an option below.</p>
             <div class="space-y-4">
                  <a href="#quiz" class="block w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105">Take the Quiz</a>
-                 <a href="#admin" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-transform transform hover:scale-105">Admin Panel</a>
+                 <a href="#admin" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-transform transform hover:scale-105">Go to Admin Panel</a>
             </div>
         </div>
 
         <div id="password-page" class="hidden text-center">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Admin Access</h1>
+            <p class="text-gray-600 mb-4">Please enter the password to continue.</p>
             <input type="password" id="password-input" class="w-full p-2 border border-gray-300 rounded-lg mb-4" placeholder="Password">
             <p id="password-error" class="text-red-500 text-sm h-5 mb-4"></p>
             <button id="password-submit-btn" class="w-full bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700">Submit</button>
-            <a href="#" class="mt-4 block text-indigo-600 hover:underline">Back</a>
+            <a href="#" class="mt-4 block text-center text-indigo-600 hover:underline">Back to Main Menu</a>
         </div>
 
         <div id="admin-menu-page" class="hidden text-center">
-            <h1 class="text-2xl font-bold mb-4">Admin Menu</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Admin Main Menu</h1>
             <div class="space-y-4">
-                <a href="#exam-management" class="block w-full bg-indigo-600 text-white py-3 px-4 rounded-lg">Management</a>
-                <a href="#exam-history" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg">View History</a>
-                <a href="#" class="mt-8 block text-indigo-600">Logout</a>
+                <a href="#exam-management" class="block w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700">Exam Management</a>
+                <a href="#exam-history" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700">Exam History</a>
+                <a href="#" class="mt-8 block text-center text-indigo-600 hover:underline">Back to Main Menu</a>
             </div>
         </div>
 
-        <div id="exam-history-page" class="hidden">
-            <h2 class="text-xl font-bold mb-4">Candidate Results History</h2>
-            <div id="history-list" class="max-h-96 overflow-y-auto"></div>
-            <a href="#admin-menu" class="mt-4 block text-center bg-gray-200 p-2 rounded">Back</a>
+        <div id="exam-management-page" class="hidden">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">Exam Management</h1>
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <p id="question-load-status" class="text-sm text-center text-green-600 mb-4 h-5"></p>
+
+                <div class="mb-4 text-left">
+                    <label for="exam-title-input" class="block text-sm font-medium text-gray-700 mb-1">Exam Title:</label>
+                    <input type="text" id="exam-title-input" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="e.g., AAISM Domain 1 Practice Exam">
+                </div>
+
+                <div class="mb-4 text-left">
+                    <label for="file-upload" class="block text-sm font-medium text-gray-700 mb-1">Load from JSON file:</label>
+                    <input type="file" id="file-upload" accept=".json" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"/>
+                </div>
+
+                <div class="mb-4 text-left">
+                     <label for="json-textarea" class="block text-sm font-medium text-gray-700 mb-1">Or paste JSON here:</label>
+                     <textarea id="json-textarea" rows="5" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="[{...}]"></textarea>
+                     <button id="load-text-btn" class="mt-2 w-full bg-gray-600 text-white py-2 px-3 rounded-lg hover:bg-gray-700 disabled:bg-gray-400" disabled>Load from Text</button>
+                </div>
+               
+                <div class="text-xs text-gray-500 text-left mb-4 p-2 bg-gray-50 rounded">
+                    <p><strong>Required Format:</strong> An array of objects. The `answer` field can be the choice letter (e.g., "A") or the full answer text.</p>
+                </div>
+               
+                <div class="mt-6 pt-6 border-t border-dashed">
+                    <button id="flush-questions-btn" class="w-full bg-red-500 text-white py-2 px-3 rounded-lg hover:bg-red-600 disabled:bg-red-300" disabled>Clear Custom Questions</button>
+                    <p class="text-xs text-center mt-2 text-gray-500">This will revert the quiz to the default questions.</p>
+                </div>
+                 <a href="#admin-menu" class="mt-8 block w-full bg-gray-200 text-gray-800 py-2 px-3 rounded-lg hover:bg-gray-300 text-center">Back to Admin Menu</a>
+            </div>
         </div>
+       
+        <div id="exam-history-page" class="hidden">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">Exam History</h1>
+            <div id="exam-history-container" class="max-h-96 overflow-y-auto">
+                <p class="text-center text-gray-500">No exam history found.</p>
+            </div>
+             <div class="mt-6 pt-6 border-t border-dashed">
+                <button id="clear-history-btn" class="w-full bg-red-500 text-white py-2 px-3 rounded-lg hover:bg-red-600 disabled:bg-red-300" disabled>Clear Exam History</button>
+            </div>
+            <a href="#admin-menu" class="mt-8 block w-full bg-gray-200 text-gray-800 py-2 px-3 rounded-lg hover:bg-gray-300 text-center">Back to Admin Menu</a>
+        </div>
+
 
         <div id="quiz-page" class="hidden">
             <div id="start-page" class="text-center">
-                <h1 id="quiz-title" class="text-2xl font-bold mb-4">Exam Loading...</h1>
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Candidate Full Name</label>
-                    <input type="text" id="candidate-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. Adarsh S">
+                <h1 id="quiz-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-4"></h1>
+                <div id="datetime-display" class="text-gray-500 text-sm mb-4"></div>
+                <p id="start-page-intro" class="text-gray-600 mb-6">Loading questions...</p>
+                
+                <div class="mb-8 text-left max-w-sm mx-auto">
+                    <label for="candidate-name" class="block text-sm font-medium text-gray-700 mb-1">Candidate Full Name <span class="text-red-500">*</span></label>
+                    <input type="text" id="candidate-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" placeholder="Enter your full name">
+                    <p id="name-error" class="text-red-500 text-sm mt-1 hidden">Please enter your name to start.</p>
                 </div>
-                <button id="start-exam-btn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400">
-                    Start Examination
+
+                <button id="start-exam-btn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105" disabled>
+                    Start Exam
                 </button>
+                 <a href="#" class="mt-8 block text-center text-indigo-600 hover:underline">Back to Main Menu</a>
             </div>
 
-            <div id="question-area" class="hidden">
-                <div class="flex justify-between items-center mb-4 border-b pb-2">
-                    <div>
-                        <span class="text-indigo-600 font-bold" id="display-candidate-name"></span>
-                        <div id="question-number" class="text-sm text-gray-500"></div>
-                    </div>
-                    <div id="timer" class="text-2xl font-mono font-bold text-red-500">00:00</div>
+            <div id="question-area" class="hidden mb-6">
+                <div id="candidate-display-area" class="text-center mb-6 pb-2 border-b border-gray-100">
+                    <span class="text-gray-500 text-sm uppercase tracking-wider">Candidate</span>
+                    <h2 id="current-candidate-name" class="text-xl font-bold text-indigo-800"></h2>
+                </div>
+
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="question-number" class="text-lg font-semibold text-gray-700"></h2>
+                    <div id="timer" class="text-3xl font-mono font-bold text-indigo-600">00:00:00</div>
                 </div>
                 <p id="question-text" class="text-gray-800 text-lg mb-6"></p>
                 <div id="options-container" class="space-y-3"></div>
-                <button id="next-btn" class="mt-8 w-full bg-gray-800 text-white py-3 rounded-lg disabled:bg-gray-400" disabled>Next Question</button>
             </div>
 
             <div id="result-area" class="hidden text-center">
-                <h2 class="text-2xl font-bold mb-2">Exam Result</h2>
-                <p id="final-candidate-name" class="text-lg font-semibold text-indigo-600 mb-4"></p>
-                <p id="score-text" class="text-3xl font-bold mb-6"></p>
-                <div class="space-y-3">
-                    <button id="download-btn" class="w-full bg-green-600 text-white py-3 rounded-lg">Download PDF Certificate</button>
-                    <button onclick="location.reload()" class="w-full bg-indigo-100 text-indigo-700 py-3 rounded-lg">Return Home</button>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Exam Completed!</h2>
+                <p id="score-text" class="text-xl text-gray-600 mb-2"></p>
+                <p id="feedback-text" class="text-lg font-semibold mb-6"></p>
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                    <button id="restart-btn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700">Restart Exam</button>
+                    <button id="review-btn" class="w-full bg-gray-700 text-white py-3 px-4 rounded-lg hover:bg-gray-800">Review Answers</button>
+                    <button id="download-btn" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700">Download Results (PDF)</button>
+                </div>
+                 <a href="#" class="mt-8 block text-center text-indigo-600 hover:underline">Back to Main Menu</a>
+            </div>
+
+            <div id="review-area" class="hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Answer Review</h2>
+                    <button id="back-to-score-btn" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700">Back to Score</button>
+                </div>
+                <div id="review-content" class="space-y-8 max-h-[70vh] overflow-y-auto pr-4"></div>
+            </div>
+
+            <div id="navigation-area" class="hidden">
+                <div class="mt-8 flex justify-between items-center">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+                <button id="next-btn" class="mt-6 w-full bg-gray-800 text-white py-3 px-4 rounded-lg hover:bg-gray-900 disabled:bg-gray-400" disabled>Next Question</button>
+            </div>
+        </div>
+    </div>
+   
+    <div id="confirmation-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+            <div class="modal-container inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Confirm Action</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500" id="modal-message">Are you sure? This action cannot be undone.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="modal-confirm-btn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        Confirm
+                    </button>
+                    <button type="button" id="modal-cancel-btn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- State ---
-        let questions = [];
-        let currentIdx = 0;
-        let userAnswers = [];
+    document.addEventListener('DOMContentLoaded', () => {
+        const defaultQuestions = [
+            { question: "Which of the following BEST describes the principle of 'Confidentiality' in the CIA triad?", options: ["Data is accurate and has not been tampered with.", "Systems and data are accessible when needed.", "Information is protected from unauthorized disclosure.", "Users can be held accountable for their actions."], answer: "C", explanation: "Confidentiality ensures that sensitive information is not disclosed to unauthorized individuals, entities, or processes.", distractors: { A: "This describes Integrity.", B: "This describes Availability.", D: "This describes Accountability." } },
+            { question: "According to the (ISC)² Code of Ethics, which canon holds the highest priority?", options: ["Act honorably, honestly, justly, responsibly, and legally.", "Provide diligent and competent service to principals.", "Advance and protect the profession.", "Protect society, the common good, necessary public trust and confidence, and the infrastructure."], answer: "D", explanation: "The (ISC)² Code of Ethics is ordered by priority. The first canon, 'Protect society, the common good...', is the most important and takes precedence over all others.", distractors: { A: "This is the second canon.", B: "This is the third canon.", C: "This is the fourth canon."} },
+            { question: "A company's security policy states that all employees must use strong passwords. A separate document specifies that passwords must be at least 12 characters long and include a mix of character types. This separate document is an example of a:", options: ["Procedure", "Guideline", "Standard", "Policy"], answer: "C", explanation: "A Standard provides mandatory, specific requirements to support a policy.", distractors: { A: "A procedure gives step-by-step instructions.", B: "A guideline offers recommendations or best practices.", D: "A policy is a high-level statement of intent."} },
+            { question: "An organization identifies a critical server has a value of $200,000. It is estimated that a specific threat will occur once every five years, and its successful exploitation would result in a 25% loss of the server's value. What is the Annualized Loss Expectancy (ALE)?", options: ["$10,000", "$50,000", "$25,000", "$100,000"], answer: "A", explanation: "First, calculate the Single Loss Expectancy (SLE): Asset Value ($200,000) * Exposure Factor (0.25) = $50,000. Next, calculate the Annualized Rate of Occurrence (ARO): 1 occurrence / 5 years = 0.2. Finally, calculate the ALE: SLE ($50,000) * ARO (0.2) = $10,000.", distractors: { B: "$50,000 is the SLE, not the ALE.", C: "This is an incorrect calculation.", D: "This is an incorrect calculation."} },
+            { question: "What is the PRIMARY purpose of a Business Impact Analysis (BIA)?", options: ["To identify and analyze threats to the organization.", "To select appropriate security controls.", "To determine the criticality of business processes and the impact of their disruption.", "To create a step-by-step plan for disaster recovery."], answer: "C", explanation: "The BIA is the foundational step in business continuity planning. Its main goal is to identify critical business functions and quantify the impact that a disruption to those functions would cause.", distractors: { A: "This is part of a risk assessment.", B: "This is part of risk treatment.", D: "This is the purpose of a DRP."} }
+        ];
+
+        // --- State Variables ---
+        let loadedQuestions = [];
+        let loadedTitle = "CISSP Domain 1 Practice Exam - Surabhi Sadasivan";
+        let currentQuestionIndex = 0;
         let score = 0;
-        let timer;
-        let timeLeft = 0;
-        let candidateName = "";
+        let examTimer;
+        let totalTimeLeft;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+        let candidateName = ""; // NEW: Variable to store candidate name
 
-        // --- Firebase Config ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAfdPoiIZH7hGhnMKtFGrzuqOa4AN6WCZI",
-            authDomain: "cissp-c35cd.firebaseapp.com",
-            projectId: "cissp-c35cd"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // --- Firebase State ---
+        let db;
+        let questionsDocRef;
+        let historyCollectionRef;
+        let isDbReady = false;
+
+        // --- DOM Elements ---
+        const landingPageEl = document.getElementById('landing-page');
+        const passwordPageEl = document.getElementById('password-page');
+        const adminMenuPageEl = document.getElementById('admin-menu-page');
+        const examManagementPageEl = document.getElementById('exam-management-page');
+        const examHistoryPageEl = document.getElementById('exam-history-page');
+        const quizPageEl = document.getElementById('quiz-page');
+        const startPageEl = document.getElementById('start-page');
+        const startExamBtn = document.getElementById('start-exam-btn');
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const resultAreaEl = document.getElementById('result-area');
+        const questionAreaEl = document.getElementById('question-area');
+        const scoreTextEl = document.getElementById('score-text');
+        const feedbackTextEl = document.getElementById('feedback-text');
+        const restartBtn = document.getElementById('restart-btn');
+        const reviewBtn = document.getElementById('review-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const timerEl = document.getElementById('timer');
+        const reviewAreaEl = document.getElementById('review-area');
+        const reviewContentEl = document.getElementById('review-content');
+        const backToScoreBtn = document.getElementById('back-to-score-btn');
+        const navigationArea = document.getElementById('navigation-area');
+        const datetimeDisplay = document.getElementById('datetime-display');
+        const startPageIntroEl = document.getElementById('start-page-intro');
+        const questionLoadStatusEl = document.getElementById('question-load-status');
+        const fileUploadEl = document.getElementById('file-upload');
+        const jsonTextareaEl = document.getElementById('json-textarea');
+        const loadTextBtn = document.getElementById('load-text-btn');
+        const flushQuestionsBtn = document.getElementById('flush-questions-btn');
+        const passwordInputEl = document.getElementById('password-input');
+        const passwordSubmitBtn = document.getElementById('password-submit-btn');
+        const passwordErrorEl = document.getElementById('password-error');
+        const examTitleInputEl = document.getElementById('exam-title-input');
+        const quizTitleEl = document.getElementById('quiz-title');
+        const examHistoryContainerEl = document.getElementById('exam-history-container');
+        const clearHistoryBtn = document.getElementById('clear-history-btn');
         
-        // Auto-login
-        firebase.auth().signInAnonymously();
+        // NEW DOM Elements
+        const candidateNameInput = document.getElementById('candidate-name');
+        const currentCandidateNameEl = document.getElementById('current-candidate-name');
+        const nameErrorEl = document.getElementById('name-error');
+        
+        // --- Modal DOM Elements ---
+        const confirmationModalEl = document.getElementById('confirmation-modal');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+        const modalMessageEl = document.getElementById('modal-message');
+        
+        // --- Firebase Setup ---
+        async function setupFirebase() {
+            // This global variable is expected to be provided by the environment.
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        const quizDoc = db.collection('artifacts').doc('default').collection('public').doc('data').collection('quizzes').doc('main');
-        const historyCol = db.collection('artifacts').doc('default').collection('public').doc('data').collection('history');
+            try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyAfdPoiIZH7hGhnMKtFGrzuqOa4AN6WCZI",
+                    authDomain: "cissp-c35cd.firebaseapp.com",
+                    projectId: "cissp-c35cd",
+                    storageBucket: "cissp-c35cd.appspot.com",
+                    messagingSenderId: "573038813376",
+                    appId: "1:573038813376:web:5285ea4d043186bf2ccd25",
+                    measurementId: "G-GZF1ZNH3RR"
+                };
+                
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                const auth = firebase.auth();
 
-        // Load Quiz Data
-        quizDoc.onSnapshot(doc => {
-            if(doc.exists) {
-                questions = JSON.parse(doc.data().questionsJSON);
-                document.getElementById('quiz-title').innerText = doc.data().title || "AAISM Exam";
+                // Set up the listener FIRST. It will handle the initial state and any subsequent changes.
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        // User is signed in. Now we can safely set up Firestore.
+                        console.log("Firebase user signed in:", user.uid);
+                        
+                        const basePath = db.collection('artifacts').doc(appId).collection('public').doc('data');
+                        questionsDocRef = basePath.collection('quizzes').doc('cissp_domain_1');
+                        historyCollectionRef = basePath.collection('history');
+
+                        questionsDocRef.onSnapshot((docSnap) => {
+                            const data = docSnap.data();
+                            if (docSnap.exists && data && data.questionsJSON) {
+                                try {
+                                    loadedQuestions = JSON.parse(data.questionsJSON);
+                                    loadedTitle = data.title || "CISSP Domain 1 Practice Exam - Surabhi Sadasivan";
+                                } catch (e) {
+                                    console.error("Error parsing questions from DB, using defaults.", e);
+                                    loadedQuestions = [...defaultQuestions];
+                                }
+                            } else {
+                                console.log("No custom questions found in DB, using defaults.");
+                                loadedQuestions = [...defaultQuestions];
+                            }
+                            updateStartPageUI(); // Update UI after getting questions
+                            startExamBtn.disabled = false;
+                        }, (error) => {
+                            console.error("Firestore listener error:", error);
+                            if (error.code === 'permission-denied') {
+                                startPageIntroEl.innerHTML = `
+                                    <div class="text-left p-4 bg-red-50 border-l-4 border-red-400">
+                                        <p class="text-red-700 font-bold">Permission Error</p>
+                                        <p class="text-gray-700 mt-2">Could not read quiz data. Please check your Firestore Security Rules to ensure authenticated users have read access.</p>
+                                        <p class="text-gray-600 text-sm mt-2">The quiz will use default questions for now.</p>
+                                    </div>
+                                `;
+                            }
+                            loadedQuestions = [...defaultQuestions];
+                            updateStartPageUI();
+                            startExamBtn.disabled = false;
+                        });
+                        
+                        historyCollectionRef.orderBy("date", "desc").onSnapshot(snapshot => {
+                            const history = [];
+                            snapshot.forEach(doc => history.push(doc.data()));
+                            displayExamHistory(history);
+                        }, (error) => {
+                             console.error("Firestore history listener error:", error);
+                        });
+
+                        isDbReady = true;
+                        loadTextBtn.disabled = false;
+                        flushQuestionsBtn.disabled = false;
+                        clearHistoryBtn.disabled = false;
+                        updateAdminStatus("Database connected.", false);
+
+                    } else {
+                        // User is signed out.
+                        console.log("Firebase user signed out.");
+                        isDbReady = false;
+                        loadedQuestions = [...defaultQuestions];
+                        updateStartPageUI();
+                        startExamBtn.disabled = false;
+                    }
+                });
+
+                // NOW, try to sign in. The listener above will catch the result.
+                await auth.signInAnonymously();
+
+            } catch (error) {
+                console.error("Firebase Setup/Auth Error:", error);
+                
+                let errorMessage = `Database connection failed. Using defaults.`;
+                let adminMessage = 'An unknown error occurred.';
+
+                if (error.code === 'auth/configuration-not-found') {
+                      errorMessage = `
+                        <div class="text-left p-4 bg-red-50 border-l-4 border-red-400">
+                            <p class="text-red-700 font-bold">Configuration Error</p>
+                            <p class="text-gray-700 mt-2">Could not connect to the database. Please go to your Firebase project's <strong>Authentication -> Sign-in method</strong> settings and enable the <strong>Anonymous</strong> provider.</p>
+                            <p class="text-gray-600 text-sm mt-2">The quiz will use the default questions for now.</p>
+                        </div>
+                      `;
+                      adminMessage = 'Auth config not found. Enable Anonymous sign-in.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage = `
+                        <div class="text-left p-4 bg-red-50 border-l-4 border-red-400">
+                            <p class="text-red-700 font-bold">Network Error</p>
+                            <p class="text-gray-700 mt-2">Could not connect to Firebase. This might be due to a network issue or an API key restriction.</p>
+                             <p class="text-gray-700 mt-2">Please check your internet connection. If the issue persists, go to your <strong>Google Cloud Console -> APIs & Services -> Credentials</strong>, select your API key, and ensure your app's domain is added to the "Website restrictions" list.</p>
+                            <p class="text-gray-600 text-sm mt-2">The quiz will use the default questions for now.</p>
+                        </div>
+                    `;
+                    adminMessage = 'Network error. Check API key domain restrictions.';
+                }
+                
+                startPageIntroEl.innerHTML = errorMessage;
+                updateAdminStatus(adminMessage, true);
+                
+                // Fallback to default questions if setup fails for any reason
+                loadedQuestions = [...defaultQuestions];
+                updateStartPageUI();
+                startExamBtn.disabled = false; // Allow starting with default questions
+                isDbReady = false;
             }
-        });
+        }
 
         // --- Routing ---
         function router() {
+            const allPages = [landingPageEl, quizPageEl, passwordPageEl, adminMenuPageEl, examManagementPageEl, examHistoryPageEl];
+            allPages.forEach(p => p.classList.add('hidden'));
+
             const hash = window.location.hash;
-            const pages = ['landing-page', 'password-page', 'admin-menu-page', 'quiz-page', 'exam-history-page'];
-            pages.forEach(p => document.getElementById(p).classList.add('hidden'));
 
-            if(hash === '#quiz') document.getElementById('quiz-page').classList.remove('hidden');
-            else if(hash === '#admin') document.getElementById('password-page').classList.remove('hidden');
-            else if(hash === '#admin-menu') document.getElementById('admin-menu-page').classList.remove('hidden');
-            else if(hash === '#exam-history') {
-                document.getElementById('exam-history-page').classList.remove('hidden');
-                loadHistory();
+            if (hash === '#admin') {
+                passwordPageEl.classList.remove('hidden');
+            } else if (hash === '#admin-menu') {
+                adminMenuPageEl.classList.remove('hidden');
+            } else if (hash === '#exam-management') {
+                examManagementPageEl.classList.remove('hidden');
+            } else if (hash === '#exam-history') {
+                examHistoryPageEl.classList.remove('hidden');
+            } else if (hash === '#quiz') {
+                quizPageEl.classList.remove('hidden');
+                initializeQuiz();
+            } else {
+                landingPageEl.classList.remove('hidden');
             }
-            else document.getElementById('landing-page').classList.remove('hidden');
         }
-        window.addEventListener('hashchange', router);
 
-        // --- Quiz Logic ---
-        document.getElementById('start-exam-btn').onclick = () => {
-            candidateName = document.getElementById('candidate-name').value.trim();
-            if(!candidateName) return alert("Please enter your name");
+        // --- Core Quiz Functions ---
+        function initializeQuiz() {
+            clearInterval(examTimer);
+            questionAreaEl.classList.add('hidden');
+            navigationArea.classList.add('hidden');
+            resultAreaEl.classList.add('hidden');
+            reviewAreaEl.classList.add('hidden');
+            startPageEl.classList.remove('hidden');
             
-            document.getElementById('display-candidate-name').innerText = candidateName;
-            document.getElementById('start-page').classList.add('hidden');
-            document.getElementById('question-area').classList.remove('hidden');
-            
-            startQuiz();
-        };
+            // Reset Candidate Name Input
+            candidateNameInput.value = "";
+            nameErrorEl.classList.add('hidden');
+            candidateNameInput.classList.remove('border-red-500');
+
+            updateStartPageUI();
+
+            const now = new Date();
+            const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+            datetimeDisplay.innerText = `Date: ${now.toLocaleDateString('en-GB', dateOptions).replace(/ /g, '-').toUpperCase()} | Time: ${now.toLocaleTimeString('en-US', timeOptions)}`;
+        }
 
         function startQuiz() {
-            currentIdx = 0;
-            userAnswers = [];
-            timeLeft = questions.length * 60;
-            startTimer();
+            // NEW: Validate Name
+            const nameValue = candidateNameInput.value.trim();
+            if (!nameValue) {
+                nameErrorEl.classList.remove('hidden');
+                candidateNameInput.classList.add('border-red-500');
+                candidateNameInput.focus();
+                return;
+            }
+            
+            candidateName = nameValue;
+            currentCandidateNameEl.innerText = candidateName; // Set name at top center
+            nameErrorEl.classList.add('hidden');
+            candidateNameInput.classList.remove('border-red-500');
+
+
+            if (loadedQuestions.length === 0) {
+                updateAdminStatus("There are no questions loaded to start the exam.", true);
+                return;
+            }
+            startPageEl.classList.add('hidden');
+            questionAreaEl.classList.remove('hidden');
+            navigationArea.classList.remove('hidden');
+            shuffledQuestions = [...loadedQuestions].sort(() => Math.random() - 0.5);
+            userAnswers = new Array(shuffledQuestions.length).fill(null);
+            currentQuestionIndex = 0;
+            score = 0;
+            startExamTimer();
             showQuestion();
         }
 
         function showQuestion() {
-            const q = questions[currentIdx];
-            document.getElementById('question-number').innerText = `Question ${currentIdx + 1} of ${questions.length}`;
-            document.getElementById('question-text').innerText = q.question;
-            
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            q.options.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = "option-btn w-full text-left p-4 border-2 rounded-lg hover:bg-gray-50";
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    userAnswers[currentIdx] = i;
-                    document.getElementById('next-btn').disabled = false;
-                };
-                container.appendChild(btn);
+            resetState();
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            questionNumberEl.innerText = `Question ${currentQuestionIndex + 1} of ${shuffledQuestions.length}`;
+            questionTextEl.innerText = currentQuestion.question;
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.dataset.index = index; // Store the index for reliable answer checking
+                button.classList.add('option-btn', 'w-full', 'text-left', 'p-4', 'border-2', 'border-gray-300', 'rounded-lg', 'hover:bg-gray-100', 'hover:border-indigo-500');
+                button.addEventListener('click', selectAnswer);
+                optionsContainerEl.appendChild(button);
             });
-            document.getElementById('next-btn').disabled = true;
+            updateProgressBar();
         }
 
-        document.getElementById('next-btn').onclick = () => {
-            currentIdx++;
-            if(currentIdx < questions.length) showQuestion();
-            else finishQuiz();
-        };
-
-        async function finishQuiz() {
-            clearInterval(timer);
-            score = questions.reduce((acc, q, i) => {
-                const correctIdx = q.answer.charCodeAt(0) - 65;
-                return acc + (userAnswers[i] === correctIdx ? 1 : 0);
-            }, 0);
-
-            const percent = Math.round((score/questions.length)*100);
-            
-            document.getElementById('question-area').classList.add('hidden');
-            document.getElementById('result-area').classList.remove('hidden');
-            document.getElementById('final-candidate-name').innerText = candidateName;
-            document.getElementById('score-text').innerText = `${score} / ${questions.length} (${percent}%)`;
-
-            // Save to History
-            await historyCol.add({
-                candidate: candidateName,
-                score: score,
-                total: questions.length,
-                percentage: percent,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-
-        function startTimer() {
-            timer = setInterval(() => {
-                timeLeft--;
-                const mins = Math.floor(timeLeft/60);
-                const secs = timeLeft%60;
-                document.getElementById('timer').innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
-                if(timeLeft <= 0) finishQuiz();
+        function startExamTimer() {
+            totalTimeLeft = Math.round(loadedQuestions.length * 1.2 * 60);
+            updateExamTimerDisplay();
+            examTimer = setInterval(() => {
+                totalTimeLeft--;
+                updateExamTimerDisplay();
+                if (totalTimeLeft <= 0) {
+                    clearInterval(examTimer);
+                    showResults();
+                }
             }, 1000);
         }
 
-        // --- PDF Generation ---
-        document.getElementById('download-btn').onclick = () => {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            doc.setFontSize(22);
-            doc.text("Examination Certificate", 105, 40, { align: "center" });
-            
-            doc.setFontSize(16);
-            doc.text(`Candidate: ${candidateName}`, 20, 70);
-            doc.text(`Exam: ${document.getElementById('quiz-title').innerText}`, 20, 80);
-            doc.text(`Score: ${score} / ${questions.length}`, 20, 90);
-            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 100);
-            
-            doc.save(`${candidateName}_Result.pdf`);
-        };
+        function updateExamTimerDisplay() {
+            if (totalTimeLeft < 0) totalTimeLeft = 0;
+            const hours = Math.floor(totalTimeLeft / 3600);
+            const minutes = Math.floor((totalTimeLeft % 3600) / 60);
+            const seconds = totalTimeLeft % 60;
+            timerEl.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerEl.classList.toggle('text-red-600', totalTimeLeft <= 5 * 60);
+        }
+        
+        function resetState() {
+            nextBtn.disabled = true;
+            while (optionsContainerEl.firstChild) {
+                optionsContainerEl.removeChild(optionsContainerEl.firstChild);
+            }
+        }
 
-        // --- Admin/History ---
-        function loadHistory() {
-            historyCol.orderBy('timestamp', 'desc').get().then(snap => {
-                const list = document.getElementById('history-list');
-                list.innerHTML = '';
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    const div = document.createElement('div');
-                    div.className = "p-3 border-b text-sm flex justify-between";
-                    div.innerHTML = `<span><b>${data.candidate}</b></span> <span>${data.score}/${data.total} (${data.percentage}%)</span>`;
-                    list.appendChild(div);
-                });
+        function selectAnswer(e) {
+            const selectedBtn = e.target;
+            Array.from(optionsContainerEl.children).forEach(btn => btn.classList.remove('selected'));
+            selectedBtn.classList.add('selected');
+            userAnswers[currentQuestionIndex] = parseInt(selectedBtn.dataset.index); // Store the selected index
+            nextBtn.disabled = false;
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        async function showResults() {
+            clearInterval(examTimer);
+            score = shuffledQuestions.reduce((acc, q, i) => {
+                const correctOptionIndex = getCorrectOptionIndex(q);
+                return acc + (userAnswers[i] === correctOptionIndex ? 1 : 0);
+            }, 0);
+            progressBar.style.width = '100%';
+            questionAreaEl.classList.add('hidden');
+            navigationArea.classList.add('hidden');
+            resultAreaEl.classList.remove('hidden');
+            const scorePercent = Math.round((score / shuffledQuestions.length) * 100) || 0;
+            scoreTextEl.innerText = `Your Score: ${score} out of ${shuffledQuestions.length} (${scorePercent}%)`;
+            const passed = scorePercent >= 70;
+            feedbackTextEl.innerText = passed ? "Congratulations! You passed." : "Keep studying! You'll get there.";
+            feedbackTextEl.classList.toggle('text-green-600', passed);
+            feedbackTextEl.classList.toggle('text-red-600', !passed);
+
+            // Save history to database WITH CANDIDATE NAME
+            if (isDbReady) {
+                try {
+                    await historyCollectionRef.add({
+                        title: loadedTitle,
+                        candidateName: candidateName, // Capture Name
+                        score: score,
+                        total: shuffledQuestions.length,
+                        percentage: scorePercent,
+                        result: passed ? "Pass" : "Fail",
+                        date: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.error("Error saving exam history:", error);
+                }
+            }
+        }
+        
+        function showReview() {
+            resultAreaEl.classList.add('hidden');
+            reviewAreaEl.classList.remove('hidden');
+            reviewContentEl.innerHTML = '';
+            shuffledQuestions.forEach((q, i) => {
+                const correctOptionIndex = getCorrectOptionIndex(q);
+                const isCorrect = userAnswers[i] === correctOptionIndex;
+                const userAnswerText = userAnswers[i] !== null ? q.options[userAnswers[i]] : 'No answer';
+                const correctAnswerFullText = q.options[correctOptionIndex];
+                const container = document.createElement('div');
+                container.classList.add('review-question-container');
+                container.innerHTML = `
+                    <p class="text-lg font-semibold text-gray-800 mb-2">Q${i + 1}: ${q.question}</p>
+                    <p class="text-sm p-3 border-2 rounded-lg mb-2 review-user-answer ${isCorrect ? 'correct' : 'incorrect'}">
+                        <strong>Your Answer:</strong> ${userAnswerText}
+                    </p>
+                    ${!isCorrect ? `<p class="text-sm bg-green-50 p-3 border-2 border-green-200 rounded-lg mb-2">
+                        <strong>Correct Answer:</strong> ${correctAnswerFullText}
+                    </p>` : ''}
+                    <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg"><strong>Explanation:</strong> ${q.explanation}</p>`;
+                reviewContentEl.appendChild(container);
             });
         }
 
-        document.getElementById('password-submit-btn').onclick = () => {
-            if(document.getElementById('password-input').value === "Legacy@2025") {
-                window.location.hash = "#admin-menu";
-            } else {
-                alert("Wrong password");
-            }
-        };
+        function handleNextButton() {
+            updateProgressBar();
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) showQuestion();
+            else showResults();
+        }
+        
+        function downloadResults() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const now = new Date();
+            const scorePercent = Math.round((score / shuffledQuestions.length) * 100) || 0;
+            let y = 15;
+            const margin = 15;
+            const pageHeight = doc.internal.pageSize.height;
+            const maxWidth = doc.internal.pageSize.width - margin * 2;
+            
+            const addFooter = () => {
+                const pageCount = doc.internal.getNumberOfPages();
+                doc.setFontSize(10);
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width / 2, pageHeight - 10, { align: 'center' });
+                }
+            };
 
-        router(); // Init
+            // --- PDF Header ---
+            doc.setFontSize(18);
+            doc.text(loadedTitle, margin, y);
+            y += 10;
+            doc.setFontSize(12);
+            doc.text(`Candidate Name: ${candidateName}`, margin, y); // ADD CANDIDATE NAME TO PDF
+            y += 7;
+            doc.text(`Completed On: ${now.toLocaleString('en-IN')}`, margin, y);
+            y += 7;
+            doc.text(`Final Score: ${score}/${shuffledQuestions.length} (${scorePercent}%)`, margin, y);
+            y += 15; // Add more space before questions start
+
+            // --- PDF Body (Questions) ---
+            shuffledQuestions.forEach((q, i) => {
+                const correctOptionIndex = getCorrectOptionIndex(q);
+                const isCorrect = userAnswers[i] === correctOptionIndex;
+                const userAnswerText = userAnswers[i] !== null ? q.options[userAnswers[i]] : "N/A";
+                const correctAnswerFullText = q.options[correctOptionIndex];
+                
+                // Helper to check for page breaks
+                const checkPageBreak = (requiredHeight) => {
+                    if (y + requiredHeight > pageHeight - margin) {
+                        doc.addPage();
+                        y = margin;
+                    }
+                };
+
+                // --- Question Text ---
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(11);
+                const qLines = doc.splitTextToSize(`Q ${i + 1}: ${q.question}`, maxWidth);
+                checkPageBreak(qLines.length * 5 + 5);
+                doc.text(qLines, margin, y);
+                y += qLines.length * 5 + 5;
+
+                // --- User Answer Box ---
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                const yourLines = doc.splitTextToSize(`Your Answer: ${userAnswerText}`, maxWidth - 4); // a little less width for padding
+                checkPageBreak(yourLines.length * 5 + 8);
+                doc.setDrawColor(isCorrect ? 10 : 239, isCorrect ? 185 : 68, isCorrect ? 135 : 68);
+                doc.setFillColor(isCorrect ? 209 : 254, isCorrect ? 250 : 226, isCorrect ? 229 : 226);
+                doc.roundedRect(margin, y, maxWidth, yourLines.length * 5 + 4, 3, 3, 'FD');
+                doc.text(yourLines, margin + 2, y + 5);
+                y += yourLines.length * 5 + 8;
+
+                // --- Correct Answer Box (if needed) ---
+                if (!isCorrect) {
+                    const correctLines = doc.splitTextToSize(`Correct Answer: ${correctAnswerFullText}`, maxWidth - 4);
+                    checkPageBreak(correctLines.length * 5 + 8);
+                    doc.setDrawColor(209, 213, 219);
+                    doc.setFillColor(249, 250, 251);
+                    doc.roundedRect(margin, y, maxWidth, correctLines.length * 5 + 4, 3, 3, 'FD');
+                    doc.text(correctLines, margin + 2, y + 5);
+                    y += correctLines.length * 5 + 8;
+                }
+                
+                // --- Explanation Text ---
+                doc.setFont(undefined, 'italic');
+                const expLines = doc.splitTextToSize(`Explanation: ${q.explanation}`, maxWidth);
+                checkPageBreak(expLines.length * 5 + 15); // Add extra space for after explanation
+                doc.text(expLines, margin, y); // Removed align: 'justify'
+                y += expLines.length * 5 + 15; // Add extra space
+            });
+            
+            addFooter();
+            doc.save(`CISSP_Results_${candidateName.replace(/\s+/g, '_')}_${now.toISOString().split('T')[0]}.pdf`);
+        }
+
+        // --- Question Management ---
+        function getCorrectOptionIndex(question) {
+            const answer = (question.answer || "").trim();
+            if (answer.length === 1 && answer.toUpperCase() >= 'A' && answer.toUpperCase() <= 'Z') { // It's a letter like "A", "B", etc.
+                return answer.toUpperCase().charCodeAt(0) - 65;
+            }
+            // It's the full text, find the index
+            return question.options.findIndex(opt => (opt || "").trim() === answer);
+        }
+
+        function validateQuestions(data) {
+            return Array.isArray(data) && data.length > 0 && data.every(q => 
+                typeof q === 'object' && q && 'question' in q && 'options' in q && 'answer' in q && 'explanation' in q && Array.isArray(q.options)
+            );
+        }
+        
+        function updateStartPageUI() {
+            // Only update the intro text if the error message isn't already there
+            if (!startPageIntroEl.querySelector('.bg-red-50')) {
+                quizTitleEl.innerText = loadedTitle;
+                const numQuestions = loadedQuestions.length;
+                const timeEstimate = Math.round(numQuestions * 1.2); 
+                startPageIntroEl.innerText = `This exam consists of ${numQuestions} questions. You will have approximately ${timeEstimate} minutes to complete it. Good luck!`;
+            }
+        }
+
+        function updateAdminStatus(message = '', isError = false) {
+            questionLoadStatusEl.innerText = message;
+            questionLoadStatusEl.classList.toggle('text-red-600', isError);
+            questionLoadStatusEl.classList.toggle('text-green-600', !isError);
+        }
+
+        async function saveQuestionsToDb(questions, title) {
+            if (!isDbReady) return updateAdminStatus("Database not ready. Please wait and try again.", true);
+            try {
+                const dataToSave = { 
+                    title: title,
+                    questionsJSON: JSON.stringify(questions) 
+                };
+                await questionsDocRef.set(dataToSave);
+                updateAdminStatus(`Successfully saved ${questions.length} questions with title "${title}".`);
+            } catch (error) {
+                console.error("Error saving to Firestore:", error);
+                updateAdminStatus(`Error saving to database: ${error.message}`, true);
+            }
+        }
+
+        async function handleTextLoad() {
+            const text = jsonTextareaEl.value;
+            const title = examTitleInputEl.value.trim();
+            if (!title) return updateAdminStatus('Please provide an exam title.', true);
+            if (!text.trim()) return updateAdminStatus('Text area is empty.', true);
+            try {
+                const parsed = JSON.parse(text);
+                if (validateQuestions(parsed)) {
+                    await saveQuestionsToDb(parsed, title);
+                    fileUploadEl.value = '';
+                } else {
+                    updateAdminStatus('Invalid JSON structure.', true);
+                }
+            } catch (error) {
+                updateAdminStatus('Invalid JSON syntax.', true);
+            }
+        }
+        
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            const title = examTitleInputEl.value.trim();
+            if (!title) {
+                updateAdminStatus('Please provide an exam title before uploading a file.', true);
+                fileUploadEl.value = '';
+                return;
+            }
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (validateQuestions(parsed)) {
+                        await saveQuestionsToDb(parsed, title);
+                        jsonTextareaEl.value = '';
+                    } else {
+                        updateAdminStatus('Invalid JSON structure in file.', true);
+                    }
+                } catch (error) {
+                    updateAdminStatus('Error parsing JSON file.', true);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function handleFlushQuestions() {
+             if (!isDbReady) return updateAdminStatus("Database not ready. Please wait and try again.", true);
+            try {
+                await questionsDocRef.delete();
+                updateAdminStatus('Cleared custom questions. Quiz will now use defaults.');
+                jsonTextareaEl.value = '';
+                fileUploadEl.value = '';
+                examTitleInputEl.value = '';
+            } catch(error) {
+                console.error("Error deleting from Firestore:", error);
+                updateAdminStatus(`Error clearing questions: ${error.message}`, true);
+            }
+        }
+        
+        async function handlePasswordSubmit() {
+            const password = passwordInputEl.value;
+            if (password === "Legacy@2025") {
+                window.location.hash = '#admin-menu';
+                passwordErrorEl.innerText = '';
+                passwordInputEl.value = '';
+            } else {
+                passwordErrorEl.innerText = 'Incorrect password. Please try again.';
+            }
+        }
+        
+        function displayExamHistory(history) {
+            examHistoryContainerEl.innerHTML = '';
+            if (history.length === 0) {
+                examHistoryContainerEl.innerHTML = '<p class="text-center text-gray-500">No exam history found.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.className = 'w-full text-sm text-left text-gray-500';
+            table.innerHTML = `
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-4 py-2">Candidate</th>
+                        <th scope="col" class="px-4 py-2">Exam Title</th>
+                        <th scope="col" class="px-4 py-2 text-center">Score</th>
+                        <th scope="col" class="px-4 py-2 text-center">Percentage</th>
+                        <th scope="col" class="px-4 py-2 text-center">Result</th>
+                        <th scope="col" class="px-4 py-2 text-center">Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            `;
+            const tbody = table.querySelector('tbody');
+            history.forEach(entry => {
+                const row = tbody.insertRow();
+                const date = new Date(entry.date).toLocaleString('en-IN');
+                const resultClass = entry.result === 'Pass' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold';
+                const candidate = entry.candidateName || 'N/A'; // Handle older records without name
+                row.className = 'bg-white border-b';
+                row.innerHTML = `
+                    <td class="px-4 py-2 font-medium text-gray-900">${candidate}</td>
+                    <td class="px-4 py-2 text-gray-700">${entry.title}</td>
+                    <td class="px-4 py-2 text-center">${entry.score} / ${entry.total}</td>
+                    <td class="px-4 py-2 text-center">${entry.percentage}%</td>
+                    <td class="px-4 py-2 text-center ${resultClass}">${entry.result}</td>
+                    <td class="px-4 py-2 text-center">${date}</td>
+                `;
+            });
+            examHistoryContainerEl.appendChild(table);
+        }
+
+        // --- New Modal Logic ---
+        function showConfirmation(message) {
+            return new Promise((resolve) => {
+                modalMessageEl.textContent = message;
+                confirmationModalEl.classList.remove('hidden');
+
+                const confirmHandler = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                const cancelHandler = () => {
+                    cleanup();
+                    resolve(false);
+                };
+                
+                const cleanup = () => {
+                    confirmationModalEl.classList.add('hidden');
+                    modalConfirmBtn.removeEventListener('click', confirmHandler);
+                    modalCancelBtn.removeEventListener('click', cancelHandler);
+                };
+
+                modalConfirmBtn.addEventListener('click', confirmHandler);
+                modalCancelBtn.addEventListener('click', cancelHandler);
+            });
+        }
+
+        async function handleClearHistory() {
+            if (!isDbReady) {
+                updateAdminStatus("Database not ready. Please wait and try again.", true);
+                return;
+            }
+            
+            const confirmed = await showConfirmation("Are you sure you want to delete all exam history? This action cannot be undone.");
+
+            if (!confirmed) return;
+
+            try {
+                const snapshot = await historyCollectionRef.get();
+                const batch = db.batch();
+                snapshot.docs.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                // The onSnapshot listener will automatically update the UI, but we can give feedback.
+                updateAdminStatus("Successfully cleared exam history.");
+                displayExamHistory([]); // Immediately clear the view
+            } catch (error) {
+                console.error("Error clearing history:", error);
+                updateAdminStatus(`Error clearing history: ${error.message}`, true);
+            }
+        }
+
+        // --- Event Listeners ---
+        startExamBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', handleNextButton);
+        restartBtn.addEventListener('click', initializeQuiz);
+        reviewBtn.addEventListener('click', showReview);
+        downloadBtn.addEventListener('click', downloadResults);
+        backToScoreBtn.addEventListener('click', () => {
+            reviewAreaEl.classList.add('hidden');
+            resultAreaEl.classList.remove('hidden');
+        });
+        
+        fileUploadEl.addEventListener('change', handleFileUpload);
+        loadTextBtn.addEventListener('click', handleTextLoad);
+        flushQuestionsBtn.addEventListener('click', handleFlushQuestions);
+        passwordSubmitBtn.addEventListener('click', handlePasswordSubmit);
+        passwordInputEl.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                handlePasswordSubmit();
+            }
+        });
+        clearHistoryBtn.addEventListener('click', handleClearHistory);
+        
+        window.addEventListener('hashchange', router);
+        
+        // Initial setup
+        setupFirebase();
+        router();
+    });
     </script>
 </body>
 </html>
