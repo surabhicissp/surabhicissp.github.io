@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AAISM Practice Exam - Surabhi & Adarsh</title>
+    <title>AAISM Practice Exam 2026 - Surabhi & Adarsh</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -86,7 +86,7 @@
 
                 <div class="mb-4 text-left">
                     <label for="exam-title-input" class="block text-sm font-medium text-gray-700 mb-1">Exam Title:</label>
-                    <input type="text" id="exam-title-input" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="e.g., AAISM Domain 1 Practice Exam">
+                    <input type="text" id="exam-title-input" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="e.g., AAISM Domain 1 Practice Exam 2026">
                 </div>
 
                 <div class="mb-4 text-left">
@@ -226,7 +226,7 @@
 
         // --- State Variables ---
         let loadedQuestions = [];
-        let loadedTitle = "CISSP Domain 1 Practice Exam - Surabhi Sadasivan";
+        let loadedTitle = "AAISM Domain 1 Practice Exam 2026";
         let currentQuestionIndex = 0;
         let score = 0;
         let examTimer;
@@ -326,7 +326,7 @@
                             if (docSnap.exists && data && data.questionsJSON) {
                                 try {
                                     loadedQuestions = JSON.parse(data.questionsJSON);
-                                    loadedTitle = data.title || "CISSP Domain 1 Practice Exam - Surabhi Sadasivan";
+                                    loadedTitle = data.title || "AAISM Domain 1 Practice Exam 2026";
                                 } catch (e) {
                                     console.error("Error parsing questions from DB, using defaults.", e);
                                     loadedQuestions = [...defaultQuestions];
@@ -803,7 +803,7 @@
         
         async function handlePasswordSubmit() {
             const password = passwordInputEl.value;
-            if (password === "Legacy@2025") {
+            if (password === "Legacy@2026") {
                 window.location.hash = '#admin-menu';
                 passwordErrorEl.innerText = '';
                 passwordInputEl.value = '';
