@@ -51,7 +51,7 @@
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
     <div id="app-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-3xl relative">
-       
+        
         <div id="landing-page" class="text-center">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">AAISM Practice Exam 2026 - Surabhi & Adarsh</h1>
             <p class="text-gray-600 mb-8">Welcome! Please choose an option below.</p>
@@ -99,11 +99,11 @@
                      <textarea id="json-textarea" rows="5" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="[{...}]"></textarea>
                      <button id="load-text-btn" class="mt-2 w-full bg-gray-600 text-white py-2 px-3 rounded-lg hover:bg-gray-700 disabled:bg-gray-400" disabled>Load from Text</button>
                 </div>
-               
+                
                 <div class="text-xs text-gray-500 text-left mb-4 p-2 bg-gray-50 rounded">
                     <p><strong>Required Format:</strong> An array of objects. The `answer` field can be the choice letter (e.g., "A") or the full answer text.</p>
                 </div>
-               
+                
                 <div class="mt-6 pt-6 border-t border-dashed">
                     <button id="flush-questions-btn" class="w-full bg-red-500 text-white py-2 px-3 rounded-lg hover:bg-red-600 disabled:bg-red-300" disabled>Clear Custom Questions</button>
                     <p class="text-xs text-center mt-2 text-gray-500">This will revert the quiz to the default questions.</p>
@@ -111,10 +111,10 @@
                  <a href="#admin-menu" class="mt-8 block w-full bg-gray-200 text-gray-800 py-2 px-3 rounded-lg hover:bg-gray-300 text-center">Back to Admin Menu</a>
             </div>
         </div>
-       
+        
         <div id="exam-history-page" class="hidden">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">Exam History</h1>
-            <div id="exam-history-container" class="max-h-96 overflow-y-auto">
+            <div id="exam-history-container" class="max-h-96 overflow-x-auto">
                 <p class="text-center text-gray-500">No exam history found.</p>
             </div>
              <div class="mt-6 pt-6 border-t border-dashed">
@@ -127,15 +127,14 @@
         <div id="quiz-page" class="hidden">
             <div id="start-page" class="text-center">
                 <h1 id="quiz-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-4"></h1>
-                <div id="datetime-display" class="text-gray-500 text-sm mb-4"></div>
-                <p id="start-page-intro" class="text-gray-600 mb-6">Loading questions...</p>
+                <div id="datetime-display" class="text-gray-500 text-sm mb-8"></div>
                 
-                <div class="mb-8 text-left max-w-sm mx-auto">
-                    <label for="candidate-name" class="block text-sm font-medium text-gray-700 mb-1">Candidate Full Name <span class="text-red-500">*</span></label>
-                    <input type="text" id="candidate-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" placeholder="Enter your full name">
-                    <p id="name-error" class="text-red-500 text-sm mt-1 hidden">Please enter your name to start.</p>
+                <div class="mb-6 text-left max-w-md mx-auto">
+                    <label for="candidate-name-input" class="block text-sm font-medium text-gray-700 mb-1">Candidate Full Name:</label>
+                    <input type="text" id="candidate-name-input" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter your full name">
                 </div>
 
+                <p id="start-page-intro" class="text-gray-600 mb-8">Loading questions...</p>
                 <button id="start-exam-btn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105" disabled>
                     Start Exam
                 </button>
@@ -143,10 +142,7 @@
             </div>
 
             <div id="question-area" class="hidden mb-6">
-                <div id="candidate-display-area" class="text-center mb-6 pb-2 border-b border-gray-100">
-                    <span class="text-gray-500 text-sm uppercase tracking-wider">Candidate</span>
-                    <h2 id="current-candidate-name" class="text-xl font-bold text-indigo-800"></h2>
-                </div>
+                <div id="display-candidate-name" class="text-center text-indigo-700 font-bold mb-4 uppercase tracking-wide"></div>
 
                 <div class="flex justify-between items-center mb-4">
                     <h2 id="question-number" class="text-lg font-semibold text-gray-700"></h2>
@@ -186,7 +182,7 @@
             </div>
         </div>
     </div>
-   
+    
     <div id="confirmation-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
         <div class="flex items-center justify-center min-h-screen px-4 text-center">
             <div class="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
@@ -237,7 +233,7 @@
         let totalTimeLeft;
         let userAnswers = [];
         let shuffledQuestions = [];
-        let candidateName = ""; // NEW: Variable to store candidate name
+        let candidateName = "";
 
         // --- Firebase State ---
         let db;
@@ -286,10 +282,8 @@
         const examHistoryContainerEl = document.getElementById('exam-history-container');
         const clearHistoryBtn = document.getElementById('clear-history-btn');
         
-        // NEW DOM Elements
-        const candidateNameInput = document.getElementById('candidate-name');
-        const currentCandidateNameEl = document.getElementById('current-candidate-name');
-        const nameErrorEl = document.getElementById('name-error');
+        const candidateNameInputEl = document.getElementById('candidate-name-input');
+        const displayCandidateNameEl = document.getElementById('display-candidate-name');
         
         // --- Modal DOM Elements ---
         const confirmationModalEl = document.getElementById('confirmation-modal');
@@ -393,14 +387,14 @@
                 let adminMessage = 'An unknown error occurred.';
 
                 if (error.code === 'auth/configuration-not-found') {
-                      errorMessage = `
+                     errorMessage = `
                         <div class="text-left p-4 bg-red-50 border-l-4 border-red-400">
                             <p class="text-red-700 font-bold">Configuration Error</p>
                             <p class="text-gray-700 mt-2">Could not connect to the database. Please go to your Firebase project's <strong>Authentication -> Sign-in method</strong> settings and enable the <strong>Anonymous</strong> provider.</p>
                             <p class="text-gray-600 text-sm mt-2">The quiz will use the default questions for now.</p>
                         </div>
-                      `;
-                      adminMessage = 'Auth config not found. Enable Anonymous sign-in.';
+                     `;
+                     adminMessage = 'Auth config not found. Enable Anonymous sign-in.';
                 } else if (error.code === 'auth/network-request-failed') {
                     errorMessage = `
                         <div class="text-left p-4 bg-red-50 border-l-4 border-red-400">
@@ -455,12 +449,7 @@
             resultAreaEl.classList.add('hidden');
             reviewAreaEl.classList.add('hidden');
             startPageEl.classList.remove('hidden');
-            
-            // Reset Candidate Name Input
-            candidateNameInput.value = "";
-            nameErrorEl.classList.add('hidden');
-            candidateNameInput.classList.remove('border-red-500');
-
+            candidateNameInputEl.value = "";
             updateStartPageUI();
 
             const now = new Date();
@@ -470,25 +459,18 @@
         }
 
         function startQuiz() {
-            // NEW: Validate Name
-            const nameValue = candidateNameInput.value.trim();
-            if (!nameValue) {
-                nameErrorEl.classList.remove('hidden');
-                candidateNameInput.classList.add('border-red-500');
-                candidateNameInput.focus();
+            candidateName = candidateNameInputEl.value.trim();
+            if (!candidateName) {
+                alert("Please enter your full name to start the exam.");
                 return;
             }
-            
-            candidateName = nameValue;
-            currentCandidateNameEl.innerText = candidateName; // Set name at top center
-            nameErrorEl.classList.add('hidden');
-            candidateNameInput.classList.remove('border-red-500');
-
 
             if (loadedQuestions.length === 0) {
                 updateAdminStatus("There are no questions loaded to start the exam.", true);
                 return;
             }
+
+            displayCandidateNameEl.innerText = `Candidate: ${candidateName}`;
             startPageEl.classList.add('hidden');
             questionAreaEl.classList.remove('hidden');
             navigationArea.classList.remove('hidden');
@@ -575,12 +557,12 @@
             feedbackTextEl.classList.toggle('text-green-600', passed);
             feedbackTextEl.classList.toggle('text-red-600', !passed);
 
-            // Save history to database WITH CANDIDATE NAME
+            // Save history to database with Candidate Name
             if (isDbReady) {
                 try {
                     await historyCollectionRef.add({
+                        candidateName: candidateName,
                         title: loadedTitle,
-                        candidateName: candidateName, // Capture Name
                         score: score,
                         total: shuffledQuestions.length,
                         percentage: scorePercent,
@@ -648,8 +630,10 @@
             doc.text(loadedTitle, margin, y);
             y += 10;
             doc.setFontSize(12);
-            doc.text(`Candidate Name: ${candidateName}`, margin, y); // ADD CANDIDATE NAME TO PDF
+            doc.setFont(undefined, 'bold');
+            doc.text(`Candidate Name: ${candidateName}`, margin, y);
             y += 7;
+            doc.setFont(undefined, 'normal');
             doc.text(`Completed On: ${now.toLocaleString('en-IN')}`, margin, y);
             y += 7;
             doc.text(`Final Score: ${score}/${shuffledQuestions.length} (${scorePercent}%)`, margin, y);
@@ -704,7 +688,7 @@
                 doc.setFont(undefined, 'italic');
                 const expLines = doc.splitTextToSize(`Explanation: ${q.explanation}`, maxWidth);
                 checkPageBreak(expLines.length * 5 + 15); // Add extra space for after explanation
-                doc.text(expLines, margin, y); // Removed align: 'justify'
+                doc.text(expLines, margin, y); 
                 y += expLines.length * 5 + 15; // Add extra space
             });
             
@@ -836,7 +820,7 @@
             }
 
             const table = document.createElement('table');
-            table.className = 'w-full text-sm text-left text-gray-500';
+            table.className = 'w-full text-sm text-left text-gray-500 min-w-full';
             table.innerHTML = `
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
@@ -855,11 +839,10 @@
                 const row = tbody.insertRow();
                 const date = new Date(entry.date).toLocaleString('en-IN');
                 const resultClass = entry.result === 'Pass' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold';
-                const candidate = entry.candidateName || 'N/A'; // Handle older records without name
                 row.className = 'bg-white border-b';
                 row.innerHTML = `
-                    <td class="px-4 py-2 font-medium text-gray-900">${candidate}</td>
-                    <td class="px-4 py-2 text-gray-700">${entry.title}</td>
+                    <td class="px-4 py-2 font-medium text-gray-900">${entry.candidateName || 'Anonymous'}</td>
+                    <td class="px-4 py-2 font-medium text-gray-900">${entry.title}</td>
                     <td class="px-4 py-2 text-center">${entry.score} / ${entry.total}</td>
                     <td class="px-4 py-2 text-center">${entry.percentage}%</td>
                     <td class="px-4 py-2 text-center ${resultClass}">${entry.result}</td>
@@ -869,7 +852,7 @@
             examHistoryContainerEl.appendChild(table);
         }
 
-        // --- New Modal Logic ---
+        // --- Modal Logic ---
         function showConfirmation(message) {
             return new Promise((resolve) => {
                 modalMessageEl.textContent = message;
@@ -913,9 +896,8 @@
                     batch.delete(doc.ref);
                 });
                 await batch.commit();
-                // The onSnapshot listener will automatically update the UI, but we can give feedback.
                 updateAdminStatus("Successfully cleared exam history.");
-                displayExamHistory([]); // Immediately clear the view
+                displayExamHistory([]); 
             } catch (error) {
                 console.error("Error clearing history:", error);
                 updateAdminStatus(`Error clearing history: ${error.message}`, true);
