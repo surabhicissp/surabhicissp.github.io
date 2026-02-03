@@ -1,157 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Certification Exam</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f7f6; }
-        
-        /* Layout Elements */
-        #registration-page, #exam-page, #result-page {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAISM Practice Exam - Surabhi & Adarsh</title>
 
-        .container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 400px; }
-        
-        /* Top Center Name Display */
-        #candidate-header {
-            position: fixed; top: 0; left: 0; width: 100%; background: #2c3e50; color: white;
-            padding: 10px 0; text-align: center; font-size: 1.1rem; font-weight: bold; display: none;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        input[type="text"] { width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        
-        button { 
-            background-color: #27ae60; color: white; border: none; padding: 12px 25px; 
-            font-size: 1rem; cursor: pointer; border-radius: 4px; transition: background 0.3s;
-        }
-        button:hover { background-color: #219150; }
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-        .hidden { display: none !important; }
-        .exam-content { margin-top: 60px; padding: 20px; }
-        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    </style>
+<style>
+body { font-family: 'Inter', sans-serif; }
+.option-btn { transition: background-color .2s,border-color .2s; }
+.selected { background:#e0e7ff!important;border-color:#6366f1!important; }
+.correct { background:#d1fae5!important;border-color:#10b981!important; }
+.incorrect { background:#fee2e2!important;border-color:#ef4444!important; }
+.review-question-container{border-left:4px solid #e5e7eb;padding-left:1rem;margin-bottom:2rem;}
+.modal-overlay{transition:opacity .3s;}
+.modal-container{transition:transform .3s;}
+</style>
 </head>
-<body>
 
-    <div id="registration-page">
-        <div class="container">
-            <h1>Exam Portal</h1>
-            <p>Please enter your full name to begin the assessment.</p>
-            <input type="text" id="candidateNameInput" placeholder="Enter Full Name" required>
-            <button onclick="startExam()">Take the exam</button>
-        </div>
-    </div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <div id="candidate-header">
-        Candidate: <span id="topNavName"></span>
-    </div>
+<div id="app-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-3xl relative">
 
-    <div id="exam-page" class="hidden">
-        <div class="exam-content">
-            <div class="container">
-                <h2>Domain 1: Security and Risk Management</h2>
-                <p>Question 1: Which of the following is the primary goal of Change Management?</p>
-                <div style="text-align: left; margin-bottom: 20px;">
-                    <input type="radio" name="q1" id="a1"> <label for="a1">Prevention of unauthorized changes</label><br>
-                    <input type="radio" name="q1" id="a2"> <label for="a2">Increasing system uptime</label>
-                </div>
-                <button onclick="finishExam()">Submit Exam</button>
-            </div>
-        </div>
-    </div>
+<!-- LANDING -->
+<div id="landing-page" class="text-center">
+<h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+AAISM Practice Exam 2026 - Surabhi & Adarsh
+</h1>
+<p class="text-gray-600 mb-8">Welcome! Please choose an option below.</p>
 
-    <div id="result-page" class="hidden">
-        <div class="container" style="width: 600px;">
-            <h2>Exam Results</h2>
-            <p id="resultSummary"></p>
-            
-            <h3>Exam History</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Candidate Name</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTableBody"></tbody>
-            </table>
-            
-            <br>
-            <button onclick="downloadPDF()" style="background-color: #2980b9;">Download Certificate (PDF)</button>
-            <button onclick="location.reload()" style="background-color: #7f8c8d;">Restart</button>
-        </div>
-    </div>
+<div class="space-y-4">
+<a href="#quiz" class="block w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700">
+Take the Quiz
+</a>
+<a href="#admin" class="block w-full bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700">
+Go to Admin Panel
+</a>
+</div>
+</div>
 
-    <script>
-        const { jsPDF } = window.jspdf;
-        let globalCandidateName = "";
+<!-- QUIZ PAGE -->
+<div id="quiz-page" class="hidden">
 
-        function startExam() {
-            const nameInput = document.getElementById('candidateNameInput').value;
-            
-            if (nameInput.trim() === "") {
-                alert("Please enter your name.");
-                return;
-            }
+<!-- START PAGE -->
+<div id="start-page" class="text-center">
+<h1 id="quiz-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-4"></h1>
+<div id="datetime-display" class="text-gray-500 text-sm mb-6"></div>
+<p id="start-page-intro" class="text-gray-600 mb-6">Loading questions...</p>
 
-            // Capture the name
-            globalCandidateName = nameInput;
+<!-- NEW : Candidate Name Capture -->
+<div class="mb-6 text-left">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+Candidate Full Name
+</label>
+<input id="candidate-name-input"
+class="w-full p-2 border border-gray-300 rounded-lg"
+placeholder="Enter your full name"/>
+<p id="candidate-name-error" class="text-red-500 text-sm mt-1 h-5"></p>
+</div>
 
-            // Update Top Center Display
-            document.getElementById('topNavName').innerText = globalCandidateName;
+<button id="start-exam-btn"
+class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700">
+Start Exam
+</button>
+</div>
 
-            // Switch Views
-            document.getElementById('registration-page').classList.add('hidden');
-            document.getElementById('candidate-header').style.display = 'block';
-            document.getElementById('exam-page').classList.remove('hidden');
-        }
+<!-- QUESTION AREA -->
+<div id="question-area" class="hidden mb-6">
 
-        function finishExam() {
-            // Switch to Result Page
-            document.getElementById('exam-page').classList.add('hidden');
-            document.getElementById('result-page').classList.remove('hidden');
+<!-- NEW : Candidate Name Top Center -->
+<div id="candidate-name-display"
+class="text-center font-semibold text-lg text-indigo-700 mb-3"></div>
 
-            // Capture in History
-            updateHistory();
+<div class="flex justify-between items-center mb-4">
+<h2 id="question-number" class="text-lg font-semibold text-gray-700"></h2>
+<div id="timer" class="text-3xl font-mono font-bold text-indigo-600">00:00:00</div>
+</div>
 
-            document.getElementById('resultSummary').innerText = 
-                `Congratulations ${globalCandidateName}, you have completed the exam successfully.`;
-        }
+<p id="question-text" class="text-gray-800 text-lg mb-6"></p>
+<div id="options-container" class="space-y-3"></div>
+</div>
 
-        function updateHistory() {
-            const tableBody = document.getElementById('historyTableBody');
-            const row = tableBody.insertRow();
-            row.insertCell(0).innerText = new Date().toLocaleDateString();
-            row.insertCell(1).innerText = globalCandidateName; // History Capture
-            row.insertCell(2).innerText = "Completed";
-        }
+<!-- RESULT -->
+<div id="result-area" class="hidden text-center">
+<h2 class="text-2xl font-bold text-gray-800 mb-4">Exam Completed!</h2>
+<p id="score-text" class="text-xl text-gray-600 mb-2"></p>
+<p id="feedback-text" class="text-lg font-semibold mb-6"></p>
 
-        function downloadPDF() {
-            const doc = new jsPDF();
-            const date = new Date().toLocaleDateString();
+<div class="flex flex-col space-y-2">
+<button id="restart-btn" class="bg-indigo-600 text-white py-3 rounded-lg">
+Restart Exam
+</button>
+<button id="download-btn" class="bg-green-600 text-white py-3 rounded-lg">
+Download Results (PDF)
+</button>
+</div>
+</div>
 
-            // PDF Formatting
-            doc.setFontSize(22);
-            doc.text("Certificate of Completion", 105, 40, { align: "center" });
-            
-            doc.setFontSize(16);
-            doc.text(`This is to certify that`, 105, 60, { align: "center" });
-            
-            doc.setFontSize(20);
-            doc.setTextColor(39, 174, 96); // Green
-            doc.text(globalCandidateName, 105, 80, { align: "center" }); // PDF Capture
-            
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(14);
-            doc.text(`Has successfully cleared the Examination on ${date}`, 105, 100, { align: "center" });
+</div>
+</div>
 
-            doc.save(`${globalCandidateName}_Result.pdf`);
-        }
-    </script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ========= STATE ========= */
+let candidateName="";
+let loadedQuestions=[];
+let shuffledQuestions=[];
+let userAnswers=[];
+let score=0;
+let currentQuestionIndex=0;
+let examTimer;
+let totalTimeLeft=0;
+
+/* ========= DOM ========= */
+const startExamBtn=document.getElementById('start-exam-btn');
+const candidateNameInput=document.getElementById('candidate-name-input');
+const candidateNameError=document.getElementById('candidate-name-error');
+const candidateNameDisplay=document.getElementById('candidate-name-display');
+
+const startPage=document.getElementById('start-page');
+const questionArea=document.getElementById('question-area');
+const resultArea=document.getElementById('result-area');
+
+const questionText=document.getElementById('question-text');
+const optionsContainer=document.getElementById('options-container');
+const questionNumber=document.getElementById('question-number');
+const timerEl=document.getElementById('timer');
+const downloadBtn=document.getElementById('download-btn');
+const scoreText=document.getElementById('score-text');
+
+/* ========= SAMPLE QUESTIONS ========= */
+loadedQuestions=[
+{
+question:"Confidentiality means?",
+options:["Accuracy","Availability","Protection from disclosure","Tracking users"],
+answer:"C",
+explanation:"Confidentiality protects information from unauthorized disclosure."
+}
+];
+
+/* ========= START QUIZ ========= */
+startExamBtn.addEventListener('click',()=>{
+
+const name=candidateNameInput.value.trim();
+
+if(!name){
+candidateNameError.innerText="Please enter full name";
+return;
+}
+
+candidateName=name;
+candidateNameDisplay.innerText=candidateName;
+
+startPage.classList.add('hidden');
+questionArea.classList.remove('hidden');
+
+shuffledQuestions=[...loadedQuestions];
+userAnswers=new Array(shuffledQuestions.length).fill(null);
+currentQuestionIndex=0;
+score=0;
+
+startTimer();
+showQuestion();
+});
+
+/* ========= SHOW QUESTION ========= */
+function showQuestion(){
+
+const q=shuffledQuestions[currentQuestionIndex];
+
+questionNumber.innerText=`Question ${currentQuestionIndex+1} of ${shuffledQuestions.length}`;
+questionText.innerText=q.question;
+
+optionsContainer.innerHTML="";
+
+q.options.forEach((opt,i)=>{
+const btn=document.createElement('button');
+btn.innerText=opt;
+btn.className="option-btn w-full text-left p-4 border rounded-lg";
+btn.onclick=()=>{
+userAnswers[currentQuestionIndex]=i;
+nextQuestion();
+};
+optionsContainer.appendChild(btn);
+});
+}
+
+/* ========= NEXT ========= */
+function nextQuestion(){
+currentQuestionIndex++;
+if(currentQuestionIndex<shuffledQuestions.length){
+showQuestion();
+}else{
+finishExam();
+}
+}
+
+/* ========= TIMER ========= */
+function startTimer(){
+totalTimeLeft=loadedQuestions.length*60;
+examTimer=setInterval(()=>{
+totalTimeLeft--;
+let m=Math.floor(totalTimeLeft/60);
+let s=totalTimeLeft%60;
+timerEl.innerText=`${m}:${s}`;
+if(totalTimeLeft<=0){
+finishExam();
+}
+},1000);
+}
+
+/* ========= FINISH ========= */
+function finishExam(){
+
+clearInterval(examTimer);
+
+score=shuffledQuestions.reduce((a,q,i)=>{
+let correct=q.answer.charCodeAt(0)-65;
+return a+(userAnswers[i]===correct?1:0);
+},0);
+
+questionArea.classList.add('hidden');
+resultArea.classList.remove('hidden');
+
+scoreText.innerText=`${candidateName} — Score: ${score}/${shuffledQuestions.length}`;
+}
+
+/* ========= PDF ========= */
+downloadBtn.addEventListener('click',()=>{
+
+const {jsPDF}=window.jspdf;
+const doc=new jsPDF();
+
+doc.setFontSize(18);
+doc.text("AAISM Exam Result",15,20);
+
+doc.setFontSize(12);
+doc.text("Candidate: "+candidateName,15,35);
+doc.text("Score: "+score+"/"+shuffledQuestions.length,15,45);
+
+doc.save("Exam_Result.pdf");
+});
+
+});
+</script>
+
 </body>
 </html>
