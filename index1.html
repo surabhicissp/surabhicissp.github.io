@@ -1,291 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AAISM Practice Exam - Surabhi & Adarsh</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
-<style>
-body{font-family:'Inter',sans-serif}
-.option-btn{transition:.2s}
-.selected{background:#e0e7ff!important;border-color:#6366f1!important}
-.correct{background:#d1fae5!important;border-color:#10b981!important}
-.incorrect{background:#fee2e2!important;border-color:#ef4444!important}
-.review-question-container{border-left:4px solid #e5e7eb;padding-left:1rem;margin-bottom:2rem}
-.modal-overlay{transition:.3s}
-.modal-container{transition:.3s}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAISM Practice Exam - Candidate Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .option-btn { transition: all 0.2s; }
+        .selected { background-color: #e0e7ff !important; border-color: #6366f1 !important; }
+        .correct { background-color: #d1fae5 !important; border-color: #10b981 !important; }
+        .incorrect { background-color: #fee2e2 !important; border-color: #ef4444 !important; }
+    </style>
 </head>
-
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-
-<div id="app-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-3xl relative">
-
-<!-- ================= LANDING ================= -->
-<div id="landing-page" class="text-center">
-<h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-AAISM Practice Exam 2026 - Surabhi & Adarsh
-</h1>
-<p class="text-gray-600 mb-8">Welcome! Please choose an option below.</p>
-
-<div class="space-y-4">
-<a href="#quiz" class="block w-full bg-indigo-600 text-white py-3 rounded-lg">Take Quiz</a>
-<a href="#admin" class="block w-full bg-gray-600 text-white py-3 rounded-lg">Admin Panel</a>
-</div>
-</div>
-
-<!-- ================= QUIZ ================= -->
-<div id="quiz-page" class="hidden">
-
-<div id="start-page" class="text-center">
-<h1 id="quiz-title" class="text-2xl font-bold mb-4"></h1>
-<div id="datetime-display" class="text-gray-500 text-sm mb-6"></div>
-<p id="start-page-intro" class="mb-6"></p>
-
-<!-- Candidate Name -->
-<div class="mb-6 text-left">
-<label class="text-sm font-medium">Candidate Full Name</label>
-<input id="candidate-name-input" class="w-full border p-2 rounded mt-1"/>
-<p id="candidate-name-error" class="text-red-500 text-sm mt-1"></p>
-</div>
-
-<button id="start-exam-btn" class="w-full bg-indigo-600 text-white py-3 rounded-lg" disabled>
-Start Exam
-</button>
-</div>
-
-<!-- Question -->
-<div id="question-area" class="hidden">
-
-<div id="candidate-name-display" class="text-center text-indigo-600 font-semibold mb-2"></div>
-
-<div class="flex justify-between mb-3">
-<h2 id="question-number"></h2>
-<div id="timer" class="font-mono text-xl text-indigo-600"></div>
-</div>
-
-<p id="question-text" class="mb-4"></p>
-<div id="options-container" class="space-y-2"></div>
-
-<div class="mt-6">
-<div class="bg-gray-200 h-2 rounded">
-<div id="progress-bar" class="bg-indigo-600 h-2 rounded" style="width:0%"></div>
-</div>
-
-<button id="next-btn" class="w-full mt-4 bg-gray-800 text-white py-3 rounded" disabled>
-Next Question
-</button>
-</div>
-
-</div>
-
-<!-- Result -->
-<div id="result-area" class="hidden text-center">
-<h2 class="text-2xl font-bold mb-4">Exam Completed</h2>
-<p id="score-text"></p>
-<p id="feedback-text" class="font-semibold mb-4"></p>
-
-<div class="flex gap-2">
-<button id="restart-btn" class="flex-1 bg-indigo-600 text-white py-3 rounded">Restart</button>
-<button id="review-btn" class="flex-1 bg-gray-700 text-white py-3 rounded">Review</button>
-<button id="download-btn" class="flex-1 bg-green-600 text-white py-3 rounded">PDF</button>
-</div>
-</div>
-
-<!-- Review -->
-<div id="review-area" class="hidden">
-<h2 class="text-xl font-bold mb-4">Review</h2>
-<div id="review-content"></div>
-<button id="back-to-score-btn" class="w-full bg-indigo-600 text-white py-3 mt-4 rounded">Back</button>
-</div>
-
-</div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded',()=>{
-
-/* ================= STATE ================= */
-
-let candidateName=""
-let loadedQuestions=[]
-let shuffledQuestions=[]
-let userAnswers=[]
-let currentQuestionIndex=0
-let score=0
-let examTimer
-let totalTimeLeft
-
-/* ================= DOM ================= */
-
-const candidateNameInput=document.getElementById("candidate-name-input")
-const candidateNameError=document.getElementById("candidate-name-error")
-const candidateNameDisplay=document.getElementById("candidate-name-display")
-
-const startExamBtn=document.getElementById("start-exam-btn")
-const questionArea=document.getElementById("question-area")
-const startPage=document.getElementById("start-page")
-const optionsContainer=document.getElementById("options-container")
-const questionText=document.getElementById("question-text")
-const questionNumber=document.getElementById("question-number")
-const timer=document.getElementById("timer")
-const nextBtn=document.getElementById("next-btn")
-const progressBar=document.getElementById("progress-bar")
-const resultArea=document.getElementById("result-area")
-const scoreText=document.getElementById("score-text")
-const feedbackText=document.getElementById("feedback-text")
-
-/* ================= FIREBASE ================= */
-
-firebase.initializeApp({
-apiKey:"AIzaSyAfdPoiIZH7hGhnMKtFGrzuqOa4AN6WCZI",
-authDomain:"cissp-c35cd.firebaseapp.com",
-projectId:"cissp-c35cd"
-})
-
-const db=firebase.firestore()
-firebase.auth().signInAnonymously()
-
-const quizRef=db.collection("quizzes").doc("main")
-const historyRef=db.collection("history")
-
-quizRef.onSnapshot(doc=>{
-if(doc.exists){
-loadedQuestions=JSON.parse(doc.data().questionsJSON)
-document.getElementById("quiz-title").innerText=doc.data().title
-document.getElementById("start-page-intro").innerText=
-`This exam has ${loadedQuestions.length} questions`
-startExamBtn.disabled=false
-}
-})
-
-/* ================= EXAM ================= */
-
-startExamBtn.onclick=()=>{
-
-candidateName=candidateNameInput.value.trim()
-
-if(!candidateName){
-candidateNameError.innerText="Enter full name"
-return
-}
-
-candidateNameDisplay.innerText=candidateName
-
-startPage.classList.add("hidden")
-questionArea.classList.remove("hidden")
-
-startExam()
-}
-
-function startExam(){
-
-shuffledQuestions=[...loadedQuestions].sort(()=>Math.random()-0.5)
-userAnswers=new Array(shuffledQuestions.length).fill(null)
-currentQuestionIndex=0
-score=0
-
-totalTimeLeft=shuffledQuestions.length*60
-
-examTimer=setInterval(()=>{
-totalTimeLeft--
-timer.innerText=
-Math.floor(totalTimeLeft/60)+":"+
-String(totalTimeLeft%60).padStart(2,'0')
-if(totalTimeLeft<=0) showResults()
-},1000)
-
-showQuestion()
-}
-
-function showQuestion(){
-
-nextBtn.disabled=true
-
-let q=shuffledQuestions[currentQuestionIndex]
-
-questionNumber.innerText=
-`Question ${currentQuestionIndex+1}/${shuffledQuestions.length}`
-
-questionText.innerText=q.question
-optionsContainer.innerHTML=""
-
-q.options.forEach((opt,i)=>{
-let btn=document.createElement("button")
-btn.innerText=opt
-btn.className="option-btn w-full border p-3 rounded text-left"
-btn.onclick=()=>{
-userAnswers[currentQuestionIndex]=i
-nextBtn.disabled=false
-}
-optionsContainer.appendChild(btn)
-})
-
-progressBar.style.width=
-(currentQuestionIndex/shuffledQuestions.length*100)+"%"
-}
-
-nextBtn.onclick=()=>{
-currentQuestionIndex++
-if(currentQuestionIndex>=shuffledQuestions.length) showResults()
-else showQuestion()
-}
-
-async function showResults(){
-
-clearInterval(examTimer)
-
-score=shuffledQuestions.reduce((a,q,i)=>{
-let correct=q.answer.charCodeAt(0)-65
-return a+(userAnswers[i]===correct?1:0)
-},0)
-
-questionArea.classList.add("hidden")
-resultArea.classList.remove("hidden")
-
-let percent=Math.round(score/shuffledQuestions.length*100)
-
-scoreText.innerText=
-`${candidateName} Score: ${score}/${shuffledQuestions.length}`
-
-feedbackText.innerText=percent>=70?"PASS":"FAIL"
-feedbackText.className=
-percent>=70?"text-green-600":"text-red-600"
-
-await historyRef.add({
-candidateName:candidateName,
-score:score,
-total:shuffledQuestions.length,
-percentage:percent,
-date:new Date().toISOString()
-})
-}
-
-/* ================= PDF ================= */
-
-document.getElementById("download-btn").onclick=()=>{
-
-const {jsPDF}=window.jspdf
-const doc=new jsPDF()
-
-doc.text("AAISM Exam Result",20,20)
-doc.text("Candidate: "+candidateName,20,35)
-doc.text("Score: "+score+"/"+shuffledQuestions.length,20,45)
-
-doc.save("ExamResult.pdf")
-}
-
-})
-</script>
-
+    <div id="app-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-3xl relative">
+        
+        <div id="landing-page" class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">AAISM Practice Exam 2026</h1>
+            <div class="space-y-4">
+                 <a href="#quiz" class="block w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105">Take the Quiz</a>
+                 <a href="#admin" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-transform transform hover:scale-105">Admin Panel</a>
+            </div>
+        </div>
+
+        <div id="password-page" class="hidden text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Admin Access</h1>
+            <input type="password" id="password-input" class="w-full p-2 border border-gray-300 rounded-lg mb-4" placeholder="Password">
+            <p id="password-error" class="text-red-500 text-sm h-5 mb-4"></p>
+            <button id="password-submit-btn" class="w-full bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700">Submit</button>
+            <a href="#" class="mt-4 block text-indigo-600 hover:underline">Back</a>
+        </div>
+
+        <div id="admin-menu-page" class="hidden text-center">
+            <h1 class="text-2xl font-bold mb-4">Admin Menu</h1>
+            <div class="space-y-4">
+                <a href="#exam-management" class="block w-full bg-indigo-600 text-white py-3 px-4 rounded-lg">Management</a>
+                <a href="#exam-history" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg">View History</a>
+                <a href="#" class="mt-8 block text-indigo-600">Logout</a>
+            </div>
+        </div>
+
+        <div id="exam-history-page" class="hidden">
+            <h2 class="text-xl font-bold mb-4">Candidate Results History</h2>
+            <div id="history-list" class="max-h-96 overflow-y-auto"></div>
+            <a href="#admin-menu" class="mt-4 block text-center bg-gray-200 p-2 rounded">Back</a>
+        </div>
+
+        <div id="quiz-page" class="hidden">
+            <div id="start-page" class="text-center">
+                <h1 id="quiz-title" class="text-2xl font-bold mb-4">Exam Loading...</h1>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Candidate Full Name</label>
+                    <input type="text" id="candidate-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. Adarsh S">
+                </div>
+                <button id="start-exam-btn" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400">
+                    Start Examination
+                </button>
+            </div>
+
+            <div id="question-area" class="hidden">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <div>
+                        <span class="text-indigo-600 font-bold" id="display-candidate-name"></span>
+                        <div id="question-number" class="text-sm text-gray-500"></div>
+                    </div>
+                    <div id="timer" class="text-2xl font-mono font-bold text-red-500">00:00</div>
+                </div>
+                <p id="question-text" class="text-gray-800 text-lg mb-6"></p>
+                <div id="options-container" class="space-y-3"></div>
+                <button id="next-btn" class="mt-8 w-full bg-gray-800 text-white py-3 rounded-lg disabled:bg-gray-400" disabled>Next Question</button>
+            </div>
+
+            <div id="result-area" class="hidden text-center">
+                <h2 class="text-2xl font-bold mb-2">Exam Result</h2>
+                <p id="final-candidate-name" class="text-lg font-semibold text-indigo-600 mb-4"></p>
+                <p id="score-text" class="text-3xl font-bold mb-6"></p>
+                <div class="space-y-3">
+                    <button id="download-btn" class="w-full bg-green-600 text-white py-3 rounded-lg">Download PDF Certificate</button>
+                    <button onclick="location.reload()" class="w-full bg-indigo-100 text-indigo-700 py-3 rounded-lg">Return Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State ---
+        let questions = [];
+        let currentIdx = 0;
+        let userAnswers = [];
+        let score = 0;
+        let timer;
+        let timeLeft = 0;
+        let candidateName = "";
+
+        // --- Firebase Config ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAfdPoiIZH7hGhnMKtFGrzuqOa4AN6WCZI",
+            authDomain: "cissp-c35cd.firebaseapp.com",
+            projectId: "cissp-c35cd"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Auto-login
+        firebase.auth().signInAnonymously();
+
+        const quizDoc = db.collection('artifacts').doc('default').collection('public').doc('data').collection('quizzes').doc('main');
+        const historyCol = db.collection('artifacts').doc('default').collection('public').doc('data').collection('history');
+
+        // Load Quiz Data
+        quizDoc.onSnapshot(doc => {
+            if(doc.exists) {
+                questions = JSON.parse(doc.data().questionsJSON);
+                document.getElementById('quiz-title').innerText = doc.data().title || "AAISM Exam";
+            }
+        });
+
+        // --- Routing ---
+        function router() {
+            const hash = window.location.hash;
+            const pages = ['landing-page', 'password-page', 'admin-menu-page', 'quiz-page', 'exam-history-page'];
+            pages.forEach(p => document.getElementById(p).classList.add('hidden'));
+
+            if(hash === '#quiz') document.getElementById('quiz-page').classList.remove('hidden');
+            else if(hash === '#admin') document.getElementById('password-page').classList.remove('hidden');
+            else if(hash === '#admin-menu') document.getElementById('admin-menu-page').classList.remove('hidden');
+            else if(hash === '#exam-history') {
+                document.getElementById('exam-history-page').classList.remove('hidden');
+                loadHistory();
+            }
+            else document.getElementById('landing-page').classList.remove('hidden');
+        }
+        window.addEventListener('hashchange', router);
+
+        // --- Quiz Logic ---
+        document.getElementById('start-exam-btn').onclick = () => {
+            candidateName = document.getElementById('candidate-name').value.trim();
+            if(!candidateName) return alert("Please enter your name");
+            
+            document.getElementById('display-candidate-name').innerText = candidateName;
+            document.getElementById('start-page').classList.add('hidden');
+            document.getElementById('question-area').classList.remove('hidden');
+            
+            startQuiz();
+        };
+
+        function startQuiz() {
+            currentIdx = 0;
+            userAnswers = [];
+            timeLeft = questions.length * 60;
+            startTimer();
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('question-number').innerText = `Question ${currentIdx + 1} of ${questions.length}`;
+            document.getElementById('question-text').innerText = q.question;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left p-4 border-2 rounded-lg hover:bg-gray-50";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    userAnswers[currentIdx] = i;
+                    document.getElementById('next-btn').disabled = false;
+                };
+                container.appendChild(btn);
+            });
+            document.getElementById('next-btn').disabled = true;
+        }
+
+        document.getElementById('next-btn').onclick = () => {
+            currentIdx++;
+            if(currentIdx < questions.length) showQuestion();
+            else finishQuiz();
+        };
+
+        async function finishQuiz() {
+            clearInterval(timer);
+            score = questions.reduce((acc, q, i) => {
+                const correctIdx = q.answer.charCodeAt(0) - 65;
+                return acc + (userAnswers[i] === correctIdx ? 1 : 0);
+            }, 0);
+
+            const percent = Math.round((score/questions.length)*100);
+            
+            document.getElementById('question-area').classList.add('hidden');
+            document.getElementById('result-area').classList.remove('hidden');
+            document.getElementById('final-candidate-name').innerText = candidateName;
+            document.getElementById('score-text').innerText = `${score} / ${questions.length} (${percent}%)`;
+
+            // Save to History
+            await historyCol.add({
+                candidate: candidateName,
+                score: score,
+                total: questions.length,
+                percentage: percent,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                const mins = Math.floor(timeLeft/60);
+                const secs = timeLeft%60;
+                document.getElementById('timer').innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+                if(timeLeft <= 0) finishQuiz();
+            }, 1000);
+        }
+
+        // --- PDF Generation ---
+        document.getElementById('download-btn').onclick = () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(22);
+            doc.text("Examination Certificate", 105, 40, { align: "center" });
+            
+            doc.setFontSize(16);
+            doc.text(`Candidate: ${candidateName}`, 20, 70);
+            doc.text(`Exam: ${document.getElementById('quiz-title').innerText}`, 20, 80);
+            doc.text(`Score: ${score} / ${questions.length}`, 20, 90);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 100);
+            
+            doc.save(`${candidateName}_Result.pdf`);
+        };
+
+        // --- Admin/History ---
+        function loadHistory() {
+            historyCol.orderBy('timestamp', 'desc').get().then(snap => {
+                const list = document.getElementById('history-list');
+                list.innerHTML = '';
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const div = document.createElement('div');
+                    div.className = "p-3 border-b text-sm flex justify-between";
+                    div.innerHTML = `<span><b>${data.candidate}</b></span> <span>${data.score}/${data.total} (${data.percentage}%)</span>`;
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        document.getElementById('password-submit-btn').onclick = () => {
+            if(document.getElementById('password-input').value === "Legacy@2025") {
+                window.location.hash = "#admin-menu";
+            } else {
+                alert("Wrong password");
+            }
+        };
+
+        router(); // Init
+    </script>
 </body>
 </html>
