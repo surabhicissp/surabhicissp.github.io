@@ -14,14 +14,14 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <style>
-body { font-family: 'Inter', sans-serif; }
-.option-btn { transition: background-color .2s,border-color .2s; }
-.selected { background:#e0e7ff!important;border-color:#6366f1!important; }
-.correct { background:#d1fae5!important;border-color:#10b981!important; }
-.incorrect { background:#fee2e2!important;border-color:#ef4444!important; }
-.review-question-container{border-left:4px solid #e5e7eb;padding-left:1rem;margin-bottom:2rem;}
-.modal-overlay{transition:opacity .3s;}
-.modal-container{transition:transform .3s;}
+body { font-family:'Inter',sans-serif; }
+.option-btn{ transition: background-color .2s,border-color .2s;}
+.selected{ background:#e0e7ff!important;border-color:#6366f1!important;}
+.correct{ background:#d1fae5!important;border-color:#10b981!important;}
+.incorrect{ background:#fee2e2!important;border-color:#ef4444!important;}
+.review-question-container{ border-left:4px solid #e5e7eb;padding-left:1rem;margin-bottom:2rem;}
+.modal-overlay{ transition:opacity .3s;}
+.modal-container{ transition:transform .3s;}
 </style>
 </head>
 
@@ -29,7 +29,7 @@ body { font-family: 'Inter', sans-serif; }
 
 <div id="app-container" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-3xl relative">
 
-<!-- LANDING -->
+<!-- Landing -->
 <div id="landing-page" class="text-center">
 <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
 AAISM Practice Exam 2026 - Surabhi & Adarsh
@@ -37,45 +37,45 @@ AAISM Practice Exam 2026 - Surabhi & Adarsh
 <p class="text-gray-600 mb-8">Welcome! Please choose an option below.</p>
 
 <div class="space-y-4">
-<a href="#quiz" class="block w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700">
+<a href="#quiz" class="block w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700">
 Take the Quiz
 </a>
-<a href="#admin" class="block w-full bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700">
+<a href="#admin" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700">
 Go to Admin Panel
 </a>
 </div>
 </div>
 
-<!-- QUIZ PAGE -->
+<!-- Quiz Wrapper -->
 <div id="quiz-page" class="hidden">
 
-<!-- START PAGE -->
+<!-- Start Page -->
 <div id="start-page" class="text-center">
 <h1 id="quiz-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-4"></h1>
-<div id="datetime-display" class="text-gray-500 text-sm mb-6"></div>
-<p id="start-page-intro" class="text-gray-600 mb-6">Loading questions...</p>
+<div id="datetime-display" class="text-gray-500 text-sm mb-8"></div>
+<p id="start-page-intro" class="text-gray-600 mb-8">Loading questions...</p>
 
-<!-- NEW : Candidate Name Capture -->
+<!-- Candidate Name Input (ADDED) -->
 <div class="mb-6 text-left">
 <label class="block text-sm font-medium text-gray-700 mb-1">
 Candidate Full Name
 </label>
 <input id="candidate-name-input"
 class="w-full p-2 border border-gray-300 rounded-lg"
-placeholder="Enter your full name"/>
+placeholder="Enter your full name" />
 <p id="candidate-name-error" class="text-red-500 text-sm mt-1 h-5"></p>
 </div>
 
 <button id="start-exam-btn"
-class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700">
+class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700">
 Start Exam
 </button>
 </div>
 
-<!-- QUESTION AREA -->
+<!-- Question Area -->
 <div id="question-area" class="hidden mb-6">
 
-<!-- NEW : Candidate Name Top Center -->
+<!-- Candidate Name Display (ADDED) -->
 <div id="candidate-name-display"
 class="text-center font-semibold text-lg text-indigo-700 mb-3"></div>
 
@@ -88,19 +88,15 @@ class="text-center font-semibold text-lg text-indigo-700 mb-3"></div>
 <div id="options-container" class="space-y-3"></div>
 </div>
 
-<!-- RESULT -->
+<!-- Result -->
 <div id="result-area" class="hidden text-center">
 <h2 class="text-2xl font-bold text-gray-800 mb-4">Exam Completed!</h2>
 <p id="score-text" class="text-xl text-gray-600 mb-2"></p>
 <p id="feedback-text" class="text-lg font-semibold mb-6"></p>
 
 <div class="flex flex-col space-y-2">
-<button id="restart-btn" class="bg-indigo-600 text-white py-3 rounded-lg">
-Restart Exam
-</button>
-<button id="download-btn" class="bg-green-600 text-white py-3 rounded-lg">
-Download Results (PDF)
-</button>
+<button id="restart-btn" class="bg-indigo-600 text-white py-3 rounded-lg">Restart Exam</button>
+<button id="download-btn" class="bg-green-600 text-white py-3 rounded-lg">Download Results (PDF)</button>
 </div>
 </div>
 
@@ -110,7 +106,7 @@ Download Results (PDF)
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
 
-/* ========= STATE ========= */
+/* ===== STATE ===== */
 let candidateName="";
 let loadedQuestions=[];
 let shuffledQuestions=[];
@@ -120,24 +116,24 @@ let currentQuestionIndex=0;
 let examTimer;
 let totalTimeLeft=0;
 
-/* ========= DOM ========= */
+/* ===== DOM ===== */
 const startExamBtn=document.getElementById('start-exam-btn');
-const candidateNameInput=document.getElementById('candidate-name-input');
-const candidateNameError=document.getElementById('candidate-name-error');
-const candidateNameDisplay=document.getElementById('candidate-name-display');
+const candidateNameInputEl=document.getElementById('candidate-name-input');
+const candidateNameErrorEl=document.getElementById('candidate-name-error');
+const candidateNameDisplayEl=document.getElementById('candidate-name-display');
 
-const startPage=document.getElementById('start-page');
-const questionArea=document.getElementById('question-area');
-const resultArea=document.getElementById('result-area');
+const startPageEl=document.getElementById('start-page');
+const questionAreaEl=document.getElementById('question-area');
+const resultAreaEl=document.getElementById('result-area');
 
-const questionText=document.getElementById('question-text');
-const optionsContainer=document.getElementById('options-container');
-const questionNumber=document.getElementById('question-number');
+const questionTextEl=document.getElementById('question-text');
+const optionsContainerEl=document.getElementById('options-container');
+const questionNumberEl=document.getElementById('question-number');
 const timerEl=document.getElementById('timer');
+const scoreTextEl=document.getElementById('score-text');
 const downloadBtn=document.getElementById('download-btn');
-const scoreText=document.getElementById('score-text');
 
-/* ========= SAMPLE QUESTIONS ========= */
+/* ===== SAMPLE QUESTIONS ===== */
 loadedQuestions=[
 {
 question:"Confidentiality means?",
@@ -147,21 +143,24 @@ explanation:"Confidentiality protects information from unauthorized disclosure."
 }
 ];
 
-/* ========= START QUIZ ========= */
-startExamBtn.addEventListener('click',()=>{
+/* ===== START QUIZ ===== */
+startExamBtn.addEventListener('click',startQuiz);
 
-const name=candidateNameInput.value.trim();
+function startQuiz(){
 
-if(!name){
-candidateNameError.innerText="Please enter full name";
+const nameValue=candidateNameInputEl.value.trim();
+
+if(!nameValue){
+candidateNameErrorEl.innerText="Please enter your full name.";
 return;
 }
 
-candidateName=name;
-candidateNameDisplay.innerText=candidateName;
+candidateName=nameValue;
+candidateNameDisplayEl.innerText=candidateName;
+candidateNameErrorEl.innerText="";
 
-startPage.classList.add('hidden');
-questionArea.classList.remove('hidden');
+startPageEl.classList.add('hidden');
+questionAreaEl.classList.remove('hidden');
 
 shuffledQuestions=[...loadedQuestions];
 userAnswers=new Array(shuffledQuestions.length).fill(null);
@@ -170,17 +169,18 @@ score=0;
 
 startTimer();
 showQuestion();
-});
+}
 
-/* ========= SHOW QUESTION ========= */
+/* ===== QUESTIONS ===== */
 function showQuestion(){
 
 const q=shuffledQuestions[currentQuestionIndex];
 
-questionNumber.innerText=`Question ${currentQuestionIndex+1} of ${shuffledQuestions.length}`;
-questionText.innerText=q.question;
+questionNumberEl.innerText=
+`Question ${currentQuestionIndex+1} of ${shuffledQuestions.length}`;
 
-optionsContainer.innerHTML="";
+questionTextEl.innerText=q.question;
+optionsContainerEl.innerHTML="";
 
 q.options.forEach((opt,i)=>{
 const btn=document.createElement('button');
@@ -190,35 +190,31 @@ btn.onclick=()=>{
 userAnswers[currentQuestionIndex]=i;
 nextQuestion();
 };
-optionsContainer.appendChild(btn);
+optionsContainerEl.appendChild(btn);
 });
 }
 
-/* ========= NEXT ========= */
-function nextQuestion(){
-currentQuestionIndex++;
-if(currentQuestionIndex<shuffledQuestions.length){
-showQuestion();
-}else{
-finishExam();
-}
-}
-
-/* ========= TIMER ========= */
+/* ===== TIMER ===== */
 function startTimer(){
 totalTimeLeft=loadedQuestions.length*60;
+
 examTimer=setInterval(()=>{
 totalTimeLeft--;
 let m=Math.floor(totalTimeLeft/60);
 let s=totalTimeLeft%60;
 timerEl.innerText=`${m}:${s}`;
-if(totalTimeLeft<=0){
-finishExam();
-}
+if(totalTimeLeft<=0) finishExam();
 },1000);
 }
 
-/* ========= FINISH ========= */
+/* ===== NAV ===== */
+function nextQuestion(){
+currentQuestionIndex++;
+if(currentQuestionIndex<shuffledQuestions.length) showQuestion();
+else finishExam();
+}
+
+/* ===== FINISH ===== */
 function finishExam(){
 
 clearInterval(examTimer);
@@ -228,15 +224,15 @@ let correct=q.answer.charCodeAt(0)-65;
 return a+(userAnswers[i]===correct?1:0);
 },0);
 
-questionArea.classList.add('hidden');
-resultArea.classList.remove('hidden');
+questionAreaEl.classList.add('hidden');
+resultAreaEl.classList.remove('hidden');
 
-scoreText.innerText=`${candidateName} — Score: ${score}/${shuffledQuestions.length}`;
+scoreTextEl.innerText=
+`${candidateName} — Score: ${score}/${shuffledQuestions.length}`;
 }
 
-/* ========= PDF ========= */
+/* ===== PDF ===== */
 downloadBtn.addEventListener('click',()=>{
-
 const {jsPDF}=window.jspdf;
 const doc=new jsPDF();
 
